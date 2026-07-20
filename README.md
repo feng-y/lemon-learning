@@ -45,7 +45,7 @@ Lemon 10 岁，当前处于 **2026 年暑假：三年级结束、即将进入四
 ```text
 active/      当前教学主线：教材、目标、进度、问题和临时观察
 core/        跨阶段复用的教育原则与教学方法
- templates/   Lemon 尚未内化时使用的轻量执行支架
+templates/   Lemon 尚未内化时使用的轻量执行支架
 history/     已结束阶段的快照、Review 和关键结论
 ```
 
