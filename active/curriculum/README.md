@@ -6,6 +6,7 @@
 
 - [`chinese.md`](chinese.md)：人教版四年级上册语文；
 - [`math.md`](math.md)：北师大版四年级上册数学；
+- [`interesting-calculations.md`](interesting-calculations.md)：高价值数字事实与有意思的计算，用于培养数感和数字关系；
 - [`english.md`](english.md)：人教 PEP 四年级上册 + Power Up 3。
 
 ## 使用原则
