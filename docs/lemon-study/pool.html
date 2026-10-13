@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lemon · 每周任务池</title><meta name="theme-color" content="#f7f8fa">
+<style>
+:root{--bg:#f6f8fb;--paper:#fff;--ink:#1f3043;--muted:#65758a;--line:#e0e6ee;--primary:#355fb2;--bluebg:#edf4ff;--amber:#9c6622;--green:#237855}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.container{max-width:1150px;margin:auto;padding:25px 22px 60px}a{color:var(--primary)}
+.header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.logo{font-size:13px;font-weight:800;letter-spacing:.1em}.back{font-size:13px;text-decoration:none;color:#526985}
+.hero{padding:30px;border-radius:20px;background:linear-gradient(115deg,#e5efff,#fff 72%);border:1px solid #d9e5f8}
+.kicker{font-size:12px;letter-spacing:.12em;color:var(--primary);font-weight:800}h1{font-size:35px;letter-spacing:-.03em;margin:6px 0 10px;line-height:1.3}h2{font-size:19px;margin:0 0 6px}h3{font-size:15px;margin:0 0 7px}.desc{color:#4f6179;font-size:15px;margin:0;max-width:760px}.pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:15px}.pill{background:#fff9;border:1px solid #d6e1f4;color:#416392;font-size:12px;border-radius:99px;padding:3px 10px}
+.main{display:grid;grid-template-columns:minmax(0,1fr) 335px;gap:18px;margin-top:20px;align-items:start}
+.column{display:grid;gap:18px}.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:21px;min-width:0}
+.muted,.help{color:var(--muted);font-size:12px;margin:0}.intro{margin-bottom:16px}
+.legend{margin-top:6px;font-size:12px;color:var(--muted)}.weeknav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:12px 0}
+.weeknav strong{font-size:15px}.weekdays{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}.day{min-width:0;padding:11px 3px;border:1px solid #e3e9f0;border-radius:10px;background:#fafbfd;cursor:pointer;text-align:center;color:#566982}.day strong{display:block;font-size:14px;color:#243953}.day small{display:block;font-size:10px}.day.active{border-color:#719bdb;background:#eaf2ff;box-shadow:inset 0 0 0 1px #719bdb}.day.today strong{color:#245eaa}.daymark{width:5px;height:5px;border-radius:50%;background:#d2aa62;margin:5px auto 0}.day:not(.due) .daymark{opacity:0}
+.sectionlabel{display:flex;align-items:center;gap:8px;margin:20px 0 10px}.sectionlabel b{font-size:14px}.sectionlabel span{font-size:11px;color:var(--muted)}
+.task{border:1px solid #e6ebf2;border-radius:11px;padding:13px;margin-bottom:9px;background:#fff}.task.onduty{border-color:#bbd1f2;background:#f9fbff}.task.done{opacity:.64}.tasktop{display:flex;justify-content:space-between;gap:10px;align-items:start}.taskname{font-weight:750;font-size:14px}.tasklabel{font-size:11px;border-radius:6px;background:#f0f3f8;color:#5b6880;padding:2px 7px;white-space:nowrap}.taskmeta{color:#71829a;font-size:12px;margin:3px 0 10px}.taskactions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.mini{padding:6px 9px;font-size:11px}.added{color:var(--green);font-size:12px;font-weight:700}
+button{font:700 13px -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC",sans-serif;cursor:pointer;border:0;border-radius:9px;padding:9px 12px;color:white;background:var(--primary)}button:hover{filter:brightness(.95)}button.secondary{background:#eaf0fa;color:#315a94}button.outline{border:1px solid #d5dfe9;background:#fff;color:#536780}button:disabled{opacity:.48;cursor:not-allowed}
+.quick{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}.form{display:grid;grid-template-columns:1fr 102px;gap:10px;margin-top:12px}.field{display:grid;gap:4px}.field label{font-size:12px;color:#5b6f89;font-weight:700}input,select{font:inherit;border:1px solid #d6e0ed;padding:9px;border-radius:9px;min-width:0;background:#fff;width:100%;color:var(--ink)}input:focus,select:focus{outline:2px solid #bbd0f1}.full{grid-column:1/-1}.form-actions{display:flex;gap:9px;align-items:center}.form-actions button{width:auto}
+.sticky{position:sticky;top:16px}.sidebox{border-radius:12px;background:#f5f8fd;padding:12px;margin:12px 0}.meter{height:9px;background:#e1e8f2;border-radius:99px;overflow:hidden;margin:8px 0}.meter>div{height:100%;background:#5f88cb;border-radius:99px;transition:width .2s}.meter.over>div{background:#ca7c45}.stats{display:flex;justify-content:space-between;font-size:12px;color:#63758d}.selection{padding:8px 0;border-bottom:1px solid #e6ebf2;display:flex;justify-content:space-between;gap:10px}.selection:last-child{border:0}.selection b{font-size:12px}.selection small{display:block;font-size:11px;color:#7a879b}.selection button{flex-shrink:0;align-self:center}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;margin-top:9px}.check input{width:16px;accent-color:var(--primary)}.callout{background:#f6f1e8;color:#705735;font-size:12px;line-height:1.8;border-radius:10px;padding:12px;margin-top:13px}
+.empty{padding:20px;color:#8895a8;font-size:13px;background:#fbfcfd;border:1px dashed #dee5ef;border-radius:10px}
+.actions{display:grid;gap:8px;margin-top:13px}.actions button{width:100%;padding:11px}.note{font-size:12px;color:#7b899c;margin-top:10px}
+.badge{font-size:10px;color:#2b6b52;background:#eaf8f1;border-radius:99px;padding:2px 7px}
+.tiny{font-size:11px;color:#8d9aab}.stage{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:12px 0 0}
+.status{font-size:12px;color:var(--green);font-weight:700;min-height:18px}
+@media(max-width:880px){.main{grid-template-columns:1fr}.sticky{position:static}.hero{padding:22px}.container{padding:18px 12px 48px}}@media(max-width:480px){.weekdays{gap:4px}.day{padding:8px 1px}.day small{font-size:9px}.day strong{font-size:13px}.card{padding:16px}.form{grid-template-columns:1fr 95px}h1{font-size:28px}}
+@media print{body{background:#fff}.header,.form,.actions,.taskactions,.weeknav button,.day, .back{display:none!important}.container{max-width:none;padding:0}.hero{background:#fff}.main{display:block}.sticky{position:static}.card{break-inside:avoid;border:1px solid #ccc;margin:10px 0}}
+</style></head><body>
+<div class="container">
+<header class="header"><div class="logo">LEMON / LEARNING</div><div><a class="back" href="../">← 返回 Lemon 首页</a>　 <a class="back" href="./">单次共学约定 →</a></div></header>
+<section class="hero"><div class="kicker">WEEKLY TASK POOL · 每周作业池</div><h1>先安排任务，再约定今天怎么学。</h1><p class="desc">固定课程作业、课内作业、数学《学霸》与书写训练放进同一个池子。成人选出今天真正需要做的，再与 Lemon 约定60～90分钟如何一起学。<b>不是每天清空所有任务。</b></p><div class="pills"><span class="pill">课程作业有固定节奏</span><span class="pill">学校当天任务先确认</span><span class="pill">能力训练按负荷选择</span><span class="pill">进入互动辅导</span></div></section>
+<div class="main"><div class="column">
+<section class="card"><h2>01 · 本周节奏</h2><p class="intro muted">这是每周的固定提醒；“出现任务”不等于“当天必须做完”。课程真实截止时间由家长确认后调整。</p>
+<div class="weeknav"><button type="button" class="outline" id="prev">← 上周</button><strong id="weekTitle"></strong><button type="button" class="outline" id="next">下周 →</button></div><div id="weekdays" class="weekdays"></div>
+<div id="dayInfo" class="callout"></div></section>
+<section class="card"><h2>02 · 从任务池挑选今天做什么</h2><p class="intro muted">每天的新东方小书童、单词训练作为<b>每日例行</b>单列，不占三个主任务名额；先处理必要任务与时间敏感的作业，负荷过高时与成人商量调整。</p><div id="pool"></div></section>
+<section class="card"><h2>03 · 补充当天真实作业</h2><p class="intro muted">课内语数英、数学《学霸》和其他作业每天不一样。可以先点常用任务模板，再补充真实页数、内容和完成标准；下方选择的日期用于该任务的安排日。</p>
+<div id="quick" class="quick"><button type="button" class="outline mini" data-quick="school-zh">+ 课内语文</button><button type="button" class="outline mini" data-quick="school-math">+ 课内数学</button><button type="button" class="outline mini" data-quick="school-en">+ 课内英语</button><button type="button" class="outline mini" data-quick="xueba">+ 数学《学霸》</button><button type="button" class="outline mini" data-quick="extra">+ 其他课外</button></div>
+<div class="form"><div class="field full"><label for="newName">具体任务</label><input id="newName" placeholder="例如：数学课内练习第3页 / 语文背诵"></div>
+<div class="field"><label for="newType">任务类别</label><select id="newType"><option value="school">课内必做</option><option value="extra">课外巩固</option><option value="course">课程作业</option></select></div>
+<div class="field"><label for="newMinutes">预估分钟</label><input id="newMinutes" type="number" min="3" max="120" value="15"></div>
+<div class="field full"><label for="newGoal">完成标准 / 需要成人引导的点</label><input id="newGoal" placeholder="例如：先一起读题，能独立完成后半部分"></div>
+<div class="form-actions full"><button id="add" type="button">加入任务池</button><span class="tiny">可以加入后再选进今天的学习安排</span></div></div>
+</section>
+<section class="card"><h2>04 · 书写训练是弹性任务</h2><p class="intro muted">“500字”是中文书写能力的梯次终点，不是每天加抄500字。英语用行数/短段递进，不直接套用中文的字数。优先使用当天已有作业材料。</p>
+<div class="stage"><div class="field"><label for="lang">本次语言</label><select id="lang"><option value="zh">中文书写</option><option value="en">英文书写</option></select></div><div class="field"><label for="level">本次梯次</label><select id="level"></select></div></div>
+<div class="form-actions" style="margin-top:12px"><button id="addWrite" class="secondary" type="button">把本次书写练习加入任务池</button></div>
+<div class="callout">重点观察规范、持续书写和独立收尾。今天课内、PU2/PU3已经很满时，书写训练可以不安排，不用惩罚式补做。</div></section>
+</div>
+<aside class="column sticky">
+<section class="card"><h2>今日学习安排</h2><p class="muted" id="selectedDate">请选择日期</p>
+<div class="form" style="margin-top:12px"><div class="field full"><label for="duration">计划时长（含休息、讨论）</label><select id="duration"><option value="60">60分钟</option><option value="75">75分钟</option><option value="90" selected>90分钟</option></select></div></div>
+<div class="sidebox"><div class="stats"><span>所选任务粗估</span><b id="used">0分钟</b></div><div class="meter" id="meter"><div id="fill" style="width:0"></div></div><div class="stats"><span id="budget">可用于任务约 70分钟</span><span id="capacity">尚有余量</span></div></div>
+<div id="selected"></div><p class="note" id="selectHint"></p>
+<div class="actions"><button id="openSession" type="button">带入60～90分钟共学约定 →</button><button class="secondary" id="copy" type="button">复制今日任务安排</button></div>
+<div id="status" class="status" role="status" aria-live="polite"></div><div class="note">每次最多带入3个主任务。进入共学页面后，成人与 Lemon 还要确认顺序、短时互动方法和奖励。</div>
+</section>
+<section class="card"><h3>家长 / 家教共同遵守</h3><div class="callout" style="margin-top:10px">成人负责任务负荷、引导、示范和反馈；Lemon 参与决定怎么学、短时尝试和表达问题。学习不是监考，也不把提前完成换成无限加量。</div>
+<p class="note">仅在当前浏览器保存任务与状态。要跨设备协作，请使用“复制今日任务安排”发送给家教；本站不收集孩子的学习记录。</p>
+<a href="./" class="back">← 查看单次共学流程</a></section>
+</aside>
+</div></div>
+<script>
+(function(){
+'use strict';
+var key='lemon-weekly-pool-v1', handoffKey='lemon-session-import-v1';
+var $=function(id){return document.getElementById(id)};
+var today=new Date();today.setHours(12,0,0,0);
+var dayNames=['周一','周二','周三','周四','周五','周六','周日'];
+function mon(d){var c=new Date(d);c.setHours(12,0,0,0);c.setDate(c.getDate()-(c.getDay()+6)%7);return c}
+function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dateOf(m,n){var d=new Date(m);d.setDate(d.getDate()+n);return d}
+function safe(text){return String(text).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var week=mon(today),day=(today.getDay()+6)%7;
+var state={tasks:{},selected:{},done:{},routines:{},routineMinutes:{},duration:90,lang:'zh',level:'50字'};
+var fixed=[
+ {id:'course-pu3-wed',name:'有道 Power Up 3 · 周三作业',type:'course',days:[2],minutes:20,goal:'先确认当天实际作业要求，再安排互动练习与独立完成',note:'周三固定作业来源；实际完成期限需按课程要求确认'},
+ {id:'course-pu3-sat',name:'有道 Power Up 3 · 周六作业',type:'course',days:[5],minutes:20,goal:'先确认当天实际作业要求，再安排互动练习与独立完成',note:'周六固定作业来源；实际完成期限需按课程要求确认'},
+ {id:'course-pu2',name:'新东方 PU2 · 上周日课程作业',type:'course',days:[2,3],minutes:25,goal:'按真实作业量拆分，计划在周三或周四完成',note:'周日课程形成的作业，周三～周四为计划处理窗口'},
+ {id:'xdf-reader',name:'新东方 · 每日小书童训练',type:'course',daily:true,days:[0,1,2,3,4,5,6],minutes:8,goal:'按小书童当天训练内容进行，成人先互动引导，再让 Lemon 尝试',note:'每日例行；8分钟为初始预算，实际按任务量调整'},
+ {id:'xdf-vocab',name:'新东方 · 每日单词训练',type:'course',daily:true,days:[0,1,2,3,4,5,6],minutes:8,goal:'先读/听/理解，再尝试提取与运用；根据当天实际词量安排',note:'每日例行；8分钟为初始预算，实际按任务量调整'}
+];
+var category={school:'课内必做',course:'课程作业',extra:'弹性巩固',writing:'能力训练'};
+function getWeek(){return ymd(week)}
+function dateKey(){return ymd(dateOf(week,day))}
+function token(id){var t=find(id);return (t&&t.daily?dateKey():getWeek())+'|'+id}
+function selected(){return state.selected[dateKey()]||[]}
+function routineMins(t){var perDay=state.routineMinutes[dateKey()]||{};return Number(perDay[t.id])||t.minutes}
+function routines(){return fixed.filter(function(t){return t.daily&&((state.routines[dateKey()]||null)===null||state.routines[dateKey()].indexOf(t.id)>=0)}).map(function(t){return Object.assign({},t,{minutes:routineMins(t)})})}
+function allTasks(){return fixed.concat(Object.values(state.tasks).filter(function(t){return t.week===getWeek() || t.type==='writing'&&t.week===getWeek()}))}
+function find(id){return allTasks().find(function(x){return x.id===id})}
+function save(){try{localStorage.setItem(key,JSON.stringify(state))}catch(e){}}
+function load(){try{var v=JSON.parse(localStorage.getItem(key)||'null');if(v&&typeof v==='object'){state=Object.assign(state,v);state.tasks=state.tasks||{};state.selected=state.selected||{};state.done=state.done||{};state.routines=state.routines||{};state.routineMinutes=state.routineMinutes||{}}}catch(e){}}
+function labelDate(){return dateKey()+' · '+dayNames[day]}
+function writeLevels(){return state.lang==='zh'?['50字','100字','150字','250字','350字','500字']:['1行','2～3行','5行','一个短段','一页短文']}
+function renderLevels(){var levels=writeLevels();if(!levels.includes(state.level))state.level=levels[0];$('level').innerHTML=levels.map(function(x){return '<option>'+safe(x)+'</option>'}).join('');$('level').value=state.level}
+function renderWeek(){
+ $('weekTitle').textContent=ymd(week)+' ～ '+ymd(dateOf(week,6));
+ $('weekdays').innerHTML=dayNames.map(function(n,i){var d=dateOf(week,i);var due=i===2||i===3||i===5;return '<button class="day '+(i===day?'active ':'')+(ymd(d)===ymd(today)?'today ':'')+(due?'due':'')+'" data-day="'+i+'"><small>'+n+'</small><strong>'+String(d.getDate()).padStart(2,'0')+'</strong><span class="daymark"></span></button>'}).join('');
+ $('weekdays').querySelectorAll('[data-day]').forEach(function(b){b.addEventListener('click',function(){day=Number(b.dataset.day);render()})});
+ var note=['检查学校作业、按负荷安排','检查学校作业、按负荷安排','有道 PU3 周三作业；PU2 可在今天处理','PU2 作业计划完成窗口；根据完成情况安排','检查学校作业、按负荷安排','有道 PU3 周六作业','新东方 PU2 课程；对应作业计划在后续周三～周四处理'][day];
+ $('dayInfo').textContent=dayNames[day]+'：'+note+'。具体作业内容、截止日期和预计耗时由成人确认。';
+ $('selectedDate').textContent=labelDate();
+}
+function taskEligible(t){return t.days?t.days.indexOf(day)>=0:t.date===dateKey()}
+function taskOrder(t){return t.type==='school'?0:t.type==='course'?1:t.type==='extra'?2:3}
+function renderPool(){
+ var current=selected(),items=allTasks().filter(function(t){return !t.date||t.date===dateKey()});
+ items.sort(function(a,b){var aa=taskEligible(a)?0:1,bb=taskEligible(b)?0:1;return aa-bb||taskOrder(a)-taskOrder(b)});
+ var sections=[
+ {label:'新东方 · 每日例行',hint:'小书童、单词训练每天出现；可以选择是否放入今天的辅导时段',filter:function(t){return !!t.daily}},
+ {label:'今天的优先候选',hint:'有固定节奏的课程作业与当天课内任务',filter:function(t){return !t.daily&&((t.days&&taskEligible(t))||(t.date===dateKey()&&t.type!=='writing'))}},
+ {label:'其余可调度任务',hint:'固定任务也可以由成人提前或顺延安排',filter:function(t){return !t.daily&&!taskEligible(t)&&!t.date}},
+ {label:'可选训练',hint:'只有今天确实有余量时才选',filter:function(t){return t.date===dateKey()&&t.type==='writing'}}
+ ];
+ var html='';
+ sections.forEach(function(sec){
+ var arr=items.filter(sec.filter);
+ if(!arr.length && sec.label==='可选训练')return;
+ html+='<div class="sectionlabel"><b>'+sec.label+'</b><span>'+sec.hint+'</span></div>';
+ if(!arr.length)html+='<div class="empty">今天尚未填写真实的学校作业；请在下方补充。</div>';
+ arr.forEach(function(t){
+ var on=t.daily?routines().some(function(x){return x.id===t.id}):current.includes(t.id),done=!!state.done[token(t.id)],label=t.daily?'每日例行':(category[t.type]||'其他');
+ html+='<div class="task '+(on?'onduty ':'')+(done?'done':'')+'"><div class="tasktop"><div class="taskname">'+safe(t.name)+'</div><span class="tasklabel">'+label+'</span></div>';
+ html+='<div class="taskmeta">'+safe(t.note||t.goal||'')+(t.daily?' · 当天预计 <input data-routine-minutes="'+safe(t.id)+'" aria-label="'+safe(t.name)+'预计分钟数" type="number" min="2" max="60" value="'+routineMins(t)+'" style="width:58px;padding:2px 5px;font-size:12px"> 分钟':' · 预计 '+t.minutes+' 分钟')+(done?' · 已完成':'')+'</div>';
+ html+='<div class="taskactions"><button type="button" class="'+(on?'outline':'secondary')+' mini" '+(t.daily?'data-routine':'data-toggle')+'="'+safe(t.id)+'">'+(on?(t.daily?'今日暂不安排':'移出今天'):(t.daily?'加入今日例行':'加入今天'))+'</button>';
+ html+='<button type="button" class="outline mini" data-done="'+safe(t.id)+'">'+(done?'撤销完成':'标记完成')+'</button>';
+ if(!t.days)html+='<button type="button" class="outline mini" data-del="'+safe(t.id)+'">删除</button>';
+ html+='</div></div>';
+ });
+ });
+ $('pool').innerHTML=html;
+ $('pool').querySelectorAll('[data-routine-minutes]').forEach(function(e){
+  e.addEventListener('change',function(){
+    if(!state.routineMinutes[dateKey()])state.routineMinutes[dateKey()]={};
+    state.routineMinutes[dateKey()][e.dataset.routineMinutes]=Math.max(2,Math.min(60,Number(e.value)||8));
+    save();render();
+  })
+ });
+ $('pool').querySelectorAll('[data-routine]').forEach(function(b){b.addEventListener('click',function(){var id=b.dataset.routine,arr=routines().map(function(t){return t.id});if(arr.includes(id))arr=arr.filter(function(x){return x!==id});else arr.push(id);state.routines[dateKey()]=arr;save();render()})});
+ $('pool').querySelectorAll('[data-toggle]').forEach(function(b){b.addEventListener('click',function(){var id=b.dataset.toggle,arr=selected().slice();if(arr.includes(id))arr=arr.filter(function(x){return x!==id});else if(arr.length<3)arr.push(id);else{notice('一次最多选择3项主任务');return}state.selected[dateKey()]=arr;save();render()})});
+ $('pool').querySelectorAll('[data-done]').forEach(function(b){b.addEventListener('click',function(){var id=b.dataset.done;state.done[token(id)]=!state.done[token(id)];save();render()})});
+ $('pool').querySelectorAll('[data-del]').forEach(function(b){b.addEventListener('click',function(){var id=b.dataset.del;delete state.tasks[id];Object.keys(state.selected).forEach(function(k){state.selected[k]=state.selected[k].filter(function(x){return x!==id})});save();render()})});
+}
+function budget(){return Number(state.duration)-(state.duration===90?20:state.duration===75?18:18)}
+function renderSelection(){
+ var arr=selected().map(find).filter(Boolean);
+ var rs=routines(),routineMins=rs.reduce(function(v,t){return v+Number(t.minutes||0)},0),sum=arr.reduce(function(v,t){return v+Number(t.minutes||0)},routineMins),b=budget();
+ $('duration').value=String(state.duration);
+ $('used').textContent=sum+'分钟（含每日例行'+routineMins+'分钟）';$('budget').textContent='学习任务容量参考约 '+b+'分钟';
+ $('fill').style.width=Math.min(100,Math.round(sum/b*100))+'%';
+ $('meter').className='meter'+(sum>b?' over':'');
+ $('capacity').textContent=sum>b?'预估超时，建议减量':sum===0?'尚未选任务':'剩余约 '+Math.max(0,b-sum)+'分钟';
+ $('selected').innerHTML=(rs.length?'<div class="sectionlabel"><b>每日例行</b><span>自动安排，可移出</span></div>'+rs.map(function(t){return '<div class="selection"><div><b>'+safe(t.name)+'</b><small>约'+t.minutes+'分钟 · 可调整</small></div></div>'}).join(''):'')+(arr.length?arr.map(function(t,i){return '<div class="selection"><div><b>'+(i+1)+'. '+safe(t.name)+'</b><small>'+t.minutes+'分钟 · '+safe(t.goal)+'</small></div><button class="outline mini" data-remove="'+safe(t.id)+'">移除</button></div>'}).join(''):'<div class="empty">今天还没选择主任务，可以只安排每日例行。</div>');
+ $('selected').querySelectorAll('[data-remove]').forEach(function(e){e.addEventListener('click',function(){state.selected[dateKey()]=selected().filter(function(x){return x!==e.dataset.remove});save();render()})});
+ $('selectHint').textContent=sum>b?'请先缩减任务量或调整预估时间；不要让 Lemon 背负无法完成的约定。':'预估仅供成人判断：总时长还包括计划、互动讨论、休息和收尾。';
+ $('openSession').disabled=!(arr.length||rs.length);
+}
+function render(){renderWeek();renderPool();renderSelection();renderLevels();save()}
+function notice(msg){$('status').textContent=msg}
+function newId(){return 'task-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6)}
+$('prev').addEventListener('click',function(){week=dateOf(week,-7);render()});
+$('next').addEventListener('click',function(){week=dateOf(week,7);render()});
+$('duration').addEventListener('change',function(){state.duration=Number(this.value);renderSelection();save()});
+$('lang').addEventListener('change',function(){state.lang=this.value;state.level='';renderLevels();save()});
+$('level').addEventListener('change',function(){state.level=this.value;save()});
+var presets={
+ 'school-zh':{name:'语文课内作业',type:'school',goal:'写清当天具体页数、题目和完成标准'},
+ 'school-math':{name:'数学课内作业',type:'school',goal:'确认当天题目范围，先共同理思路再练习'},
+ 'school-en':{name:'英语课内作业',type:'school',goal:'填写当天听说读写的具体要求'},
+ 'xueba':{name:'数学《学霸》',type:'extra',goal:'填写具体页数；已掌握的内容不必重复加量'},
+ 'extra':{name:'其他课外作业',type:'extra',goal:'填写课程和明确完成范围'}
+};
+$('quick').querySelectorAll('[data-quick]').forEach(function(b){
+ b.addEventListener('click',function(){
+  var p=presets[b.dataset.quick];$('newName').value=p.name;$('newType').value=p.type;$('newGoal').value=p.goal;$('newName').focus();notice('已选模板，请补充具体内容后加入任务池');
+ })
+});
+$('add').addEventListener('click',function(){
+ var name=$('newName').value.trim(),minutes=Math.min(120,Math.max(3,Number($('newMinutes').value)||15)),goal=$('newGoal').value.trim();
+ if(!name){notice('请先填写具体作业名称');$('newName').focus();return}
+ var id=newId();state.tasks[id]={id:id,week:getWeek(),date:dateKey(),name:name,type:$('newType').value,minutes:minutes,goal:goal||'成人引导后，Lemon 独立尝试并交流结果',note:goal||'当天实际作业'};
+ $('newName').value='';$('newGoal').value='';notice('已加入 '+labelDate()+' 的任务池');render();
+});
+$('addWrite').addEventListener('click',function(){
+ var zh=state.lang==='zh',name=(zh?'中文':'英文')+'书写 · '+state.level;
+ var existing=Object.values(state.tasks).find(function(t){return t.date===dateKey()&&t.type==='writing'});
+ if(existing){existing.name=name;existing.minutes=10;existing.goal='确认笔画/笔顺或字母格式 → Lemon 短时自主书写 → 共同看规范与效率';existing.note='弹性梯次；不额外叠加高负荷';notice('已更新本次书写梯次')}
+ else{var id=newId();state.tasks[id]={id:id,week:getWeek(),date:dateKey(),name:name,type:'writing',minutes:10,goal:'确认书写要求 → 自己尝试 → 一起反馈',note:'弹性梯次；不额外叠加高负荷'};notice('书写任务已加入可选池')}
+ render();
+});
+function planText(){
+ var tasks=selected().map(find).filter(Boolean),rs=routines();
+ var s='Lemon｜'+labelDate()+' 任务安排（'+state.duration+'分钟含互动、休息）\n';
+ s+='【每日例行】\n'+(rs.map(function(t){return t.name+'（约'+t.minutes+'分钟）— '+t.goal}).join('\n')||'今天未安排')+'\n';
+ s+='【今天选择的主任务】\n'+(tasks.map(function(t,i){return (i+1)+'. '+t.name+'（粗估'+t.minutes+'分钟）— '+t.goal}).join('\n')||'本次仅安排每日例行');
+ s+='\n【师生共学】先交流方法 → 一起示范/讨论 → Lemon 短时独立尝试 → 共同反馈。\n【边界】成人把控任务量；不逐题监考，不临时加码；剩余任务另行安排。';
+ return s;
+}
+$('copy').addEventListener('click',function(){
+ var str=planText();
+ if(!selected().length&&!routines().length){notice('先挑选今天的任务');return}
+ if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(str).then(function(){notice('已复制，可以发给家教')},function(){notice('复制失败，请尝试使用电脑浏览器')});
+ else{var el=document.createElement('textarea');el.value=str;document.body.appendChild(el);el.select();var ok=document.execCommand('copy');el.remove();notice(ok?'已复制':'复制失败')}
+});
+$('openSession').addEventListener('click',function(){
+ var arr=selected().map(find).filter(Boolean),rs=routines();if(!arr.length&&!rs.length)return;
+ var payload={date:dateKey(),duration:state.duration,week:getWeek(),tasks:arr.map(function(t){return {id:t.id,title:t.name,goal:t.goal}}),routines:rs.map(function(t){return {id:t.id,title:t.name,goal:t.goal,minutes:t.minutes}})};
+ try{localStorage.setItem(handoffKey,JSON.stringify(payload))}catch(e){notice('浏览器存储不可用，请先复制计划');return}
+ window.location.href='./?fromPool=1';
+});
+load();$('lang').value=state.lang;if(!['60','75','90'].includes(String(state.duration)))state.duration=90;render(); 
+})();
+</script>
+</body></html>
