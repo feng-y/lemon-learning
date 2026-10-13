@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f6f7fb">
+<title>Lemon · 一次学习的共同约定</title>
+<style>
+:root{--bg:#f6f7fb;--ink:#202b3a;--muted:#617084;--line:#e2e6ed;--blue:#3867b7;--blue-light:#ecf3ff;--green:#27805f;--paper:#fff;--warm:#fbf7ee}
+*{box-sizing:border-box}body{margin:0;font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink)}a{color:var(--blue)}
+.wrap{max-width:1100px;margin:auto;padding:28px 24px 72px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:24px}.brand{font-size:14px;font-weight:800;letter-spacing:.08em}.navline{font-size:12px;color:var(--muted)}
+.hero{padding:34px 38px;border:1px solid #d9e3f1;background:linear-gradient(112deg,#e9f2ff 0%,#fff 60%,#fdfaf1 100%);border-radius:22px}
+.kicker{font-size:12px;color:#3867b7;font-weight:800;letter-spacing:.12em}
+h1{font-size:clamp(27px,4vw,43px);line-height:1.22;letter-spacing:-.03em;margin:10px 0 16px}h2{font-size:21px;margin:0 0 5px;letter-spacing:-.02em}h3{font-size:15px;margin:0 0 7px}.lead{max-width:780px;font-size:17px;line-height:1.8;color:#3b4a5e;margin:0}.hero-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:20px}.chip{font-size:12px;border:1px solid #cbdaf2;color:#3564a1;border-radius:999px;padding:4px 10px;background:#ffffffaf}
+main{display:grid;grid-template-columns:minmax(0,1fr) 320px;align-items:start;gap:22px;margin-top:25px}.stack{display:grid;gap:19px}
+.card{border:1px solid var(--line);background:var(--paper);border-radius:17px;padding:24px}.cardhead{display:flex;gap:14px;align-items:flex-start;margin-bottom:20px}.num{width:31px;height:31px;border-radius:10px;display:grid;place-items:center;background:var(--blue-light);color:var(--blue);font-size:14px;font-weight:800;flex-shrink:0}.hint{font-size:13px;color:var(--muted);margin:0}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:grid;gap:6px;min-width:0}.field>label,.field>span{font-weight:700;font-size:13px;color:#455267}input,select,textarea{font:inherit;color:var(--ink);width:100%;border:1px solid #d5dce6;background:#fff;border-radius:10px;padding:9px 11px;outline:none}input:focus,select:focus,textarea:focus{border-color:#6495da;box-shadow:0 0 0 3px #e7f0ff}textarea{resize:vertical;min-height:66px}
+.task{background:#fafbfe;border:1px solid #e7ebf2;border-radius:12px;padding:14px;margin-top:10px;display:grid;grid-template-columns:1fr;gap:9px}.task-title{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:800;color:#65758a}
+.choicebox{margin-top:16px;background:var(--warm);border-radius:12px;padding:14px;color:#66513c;font-size:13px}.choicebox strong{color:#4a3927}
+.schedule-row{display:grid;grid-template-columns:90px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid #edf0f5}.schedule-row:last-child{border:0}.time{font-size:12px;font-weight:800;color:#566987;font-variant-numeric:tabular-nums}.time small{display:block;font-size:11px;color:#93a0b0;font-weight:400}.schedule-name{font-size:14px;font-weight:750}.schedule-desc{font-size:12px;color:var(--muted)}.schedule-row select{margin-top:7px;padding:6px;font-size:13px}.rowhint{font-size:12px;color:var(--muted)}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:11px}.rhythm{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.rhythm-step{background:#f3f7fe;border:1px solid #dce8f8;border-radius:12px;padding:13px}.rhythm-step b{display:block;margin:3px 0 4px;font-size:13px}.rhythm-step p{margin:0;color:#5f6c7e;font-size:12px}.step-mark{font-size:12px;font-weight:800;color:#3765aa}.rule{border:1px solid #e4e9ef;border-radius:11px;padding:13px;background:#fbfcff}.rule b{display:block;font-size:13px;margin-bottom:4px}.rule p{margin:0;font-size:12px;color:var(--muted)}
+.checkrow{display:flex;align-items:flex-start;gap:9px;font-size:14px;padding:7px 0}.checkrow input{width:17px;height:17px;margin-top:3px;accent-color:var(--blue);flex-shrink:0}.checkrow span{flex:1}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}button{border:0;cursor:pointer;background:var(--blue);color:white;padding:10px 14px;border-radius:10px;font:700 13px/1.35 inherit;transition:transform .1s,background .1s}button:hover{background:#2f58a1}button:active{transform:scale(.98)}button.secondary{background:#eef3fa;color:#345d95}button.secondary:hover{background:#dae8f8}button.ghost{background:transparent;color:#5b6a7e;border:1px solid #dbe2ed}.notice{font-size:12px;color:var(--muted);margin-top:10px}
+.side{position:sticky;top:18px;display:grid;gap:15px}.side .card{padding:21px}.divider{height:1px;background:var(--line);margin:15px 0}.summaryhead{font-size:12px;letter-spacing:.08em;font-weight:800;color:#73829a}.summarytitle{font-size:22px;font-weight:850;margin:6px 0 8px}.bul{padding-left:18px;margin:8px 0 0;font-size:13px}.bul li{margin:7px 0}.callout{background:#f1f7f4;border:1px solid #d7e9de;border-radius:12px;padding:14px}.callout strong{color:#247151}.callout p{margin:5px 0 0;color:#416857;font-size:13px}.talk{margin:0;font-size:14px;color:#3d4a5e}.talk p{margin:0 0 10px}.talk p:last-child{margin:0}.talk b{color:#202b3a}.foot{font-size:12px;color:#8090a3;padding-top:20px}.inline-note{margin-top:10px;padding:10px 12px;border-radius:10px;background:#f6f8fc;font-size:12px;color:#65748b}#status{font-size:12px;color:var(--green);font-weight:700}
+@media(max-width:850px){main{grid-template-columns:1fr}.side{position:static;grid-template-columns:1fr 1fr;align-items:start}.hero{padding:26px}.wrap{padding:19px 14px 50px}}@media(max-width:560px){.side{grid-template-columns:1fr}.form-grid,.rules,.rhythm{grid-template-columns:1fr}.card{padding:18px}.top{flex-direction:column;align-items:start}.schedule-row{grid-template-columns:74px 1fr;gap:8px}}
+@media print{body{background:#fff}.wrap{max-width:100%;padding:0}.top,.actions,.foot,.notice,.side .smallprint{display:none!important}.hero{padding:18px;border-radius:0;background:#fff}.hero-meta{margin-top:6px}main{display:block;margin-top:12px}.stack{gap:8px}.side{position:static;display:block}.card{break-inside:avoid;border-radius:0;padding:14px;margin-bottom:8px}button{display:none}.task,.rule{background:#fff}.choicebox{background:#fff;border:1px solid #ddd}.side .card{padding:14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="brand">LEMON / LEARNING</div><div class="navline"><a href="../">返回 Lemon 首页</a> · <a href="./pool.html">每周任务池</a> · 单次共学约定</div></header>
+<div class="hero">
+  <div class="kicker">一次学习 · 共同约定</div>
+  <h1>今天这 60～90 分钟，<br>我们怎么一起完成？</h1>
+  <p class="lead">今天做什么，先从<a href="./pool.html">每周任务池</a>选择。这里负责把选好的任务变成一段<b>一起学习</b>的时间：成人带着 Lemon 讨论、示范和反馈，Lemon 短时独立尝试，并逐渐承担自己的责任。60～90分钟包含互动、练习、休息和收尾。</p>
+  <div class="hero-meta"><span class="chip">成人与孩子共同学习</span><span class="chip">互动 → 尝试 → 反馈</span><span class="chip">到点清点，不临时加码</span></div>
+</div>
+<main>
+<div class="stack">
+<section class="card" id="prepare">
+ <div class="cardhead"><div class="num">1</div><div><h2>成人先准备：今天要学什么、做什么</h2><p class="hint">可以从<a href="./pool.html">每周任务池</a>带入，也可临时修改。最多三项主任务；成人判断哪里要一起学，哪里适合 Lemon 自己试，而不是把整堂课安排成安静写作业。</p></div></div>
+ <div class="form-grid">
+  <div class="field"><label for="sessionDate">学习日期</label><input id="sessionDate" type="date"></div>
+  <div class="field"><label for="duration">约定总时长（包含休息）</label><select id="duration"><option value="60">60 分钟</option><option value="75">75 分钟</option><option value="90" selected>90 分钟</option></select></div>
+ </div>
+ <div class="task"><div class="task-title"><span>任务 1 · 优先</span><span>写清完成标准</span></div><div class="field"><label for="task0">内容</label><input id="task0" value="数学作业"></div><div class="field"><label for="goal0">今天做到哪里算完成</label><input id="goal0" value="先一起理清方法，再独立做2～3题并交流结果"></div></div>
+ <div class="task"><div class="task-title"><span>任务 2</span><span>不按字数盲目加量</span></div><div class="field"><label for="task1">内容</label><input id="task1" value="语文摘抄"></div><div class="field"><label for="goal1">完成标准</label><input id="goal1" value="一起看书写要点，再自己完成约定段落"></div></div>
+ <div class="task"><div class="task-title"><span>任务 3 · 可按实际删减</span><span>允许留空</span></div><div class="field"><label for="task2">内容</label><input id="task2" value="作文抄写"></div><div class="field"><label for="goal2">完成标准</label><input id="goal2" value="一起确认书写要求，明确本次合理的完成范围"></div></div>
+ <div class="choicebox"><strong>成人先判断：</strong>今天需要交的学校作业与可调整的练习必须分清。若任务明显超出这一时段，就提前减掉可选练习或另作安排，不能把“不可能完成”当成 Lemon 的态度问题。</div>
+</section>
+<section class="card" id="agree">
+ <div class="cardhead"><div class="num">2</div><div><h2>和 Lemon 用 3～5 分钟谈妥</h2><p class="hint">不需要长篇教育。让他看见今天的任务，再给两个真正可以兑现的选择。</p></div></div>
+ <div class="form-grid">
+  <div class="field"><label for="first">Lemon 选择先做</label><select id="first"></select></div>
+  <div class="field"><label for="promise">今天自己负责的一件事</label><select id="promise"><option>先讲自己的想法，再独立尝试一小步</option><option>不会时说清楚卡在哪里，并继续尝试</option><option>一起做过示例后，自己试一道相近题</option><option>做完一小段后，自己检查并说说发现</option></select></div>
+  <div class="field"><label for="reward">自己选择的额外奖励</label><select id="reward"><option>听故事 20 分钟</option><option>玩游戏 15 分钟</option><option>看游戏视频 10 分钟</option><option>与家长游戏 / 活动 20 分钟</option><option value="other">其他（自行填写）</option></select></div>
+  <div class="field"><label for="rewardOther">自定义奖励（选“其他”时生效）</label><input id="rewardOther" placeholder="例如：周末选择一次家庭活动"></div>
+ </div>
+ <div class="inline-note">奖励由家长先确认时长、内容与可兑现性。原有正常休息、阅读时间不用全部变成奖励。</div>
+ <div class="divider"></div>
+ <label class="checkrow"><input type="checkbox" id="join"><span>Lemon 已经参与选择，并知道今天约定的第一步</span></label>
+ <label class="checkrow"><input type="checkbox" id="adult"><span>成人确认：完成标准合理；不因做得快临时追加任务</span></label>
+ <div class="choicebox"><strong>怎样算兑现：</strong>奖励看 Lemon 是否真实参与思考、肯尝试，并履行自己选的那项责任，而不是是否全程安静或答案全对。主动提问、需要合理帮助，不直接取消奖励；未做到就说明具体行为，下一次仍可重新尝试。</div>
+</section>
+<section class="card" id="do">
+ <div class="cardhead"><div class="num">3</div><div><h2>执行：三段共同学习，而不是三段监考</h2><p class="hint">下方按总时长安排三段共学、两次休息。每段由成人引导、一起练、Lemon 短时独立尝试、共同反馈组成；不是要求他连续安静做完20分钟。</p></div></div>
+ <div id="agenda"></div>
+ <div id="routinePlan" style="display:none" class="inline-note"></div>
+ <div class="divider"></div>
+ <h3>每段共学如何进行（按任务灵活调整，不是固定配额）</h3>
+ <div class="rhythm">
+  <div class="rhythm-step"><div class="step-mark">① 说一说</div><b>孩子先说自己的想法</b><p>成人问“你准备怎么做？哪里不确定？”先听，不急着纠正。</p></div>
+  <div class="rhythm-step"><div class="step-mark">② 一起做</div><b>成人适当示范与引导</b><p>共同拆解一题、一个字或一句英文；只讲眼前最关键的一步。</p></div>
+  <div class="rhythm-step"><div class="step-mark">③ 自己试</div><b>短时练习，成人暂时退后</b><p>先尝试约3～8分钟或一小组；不会可以说清卡点，不要求独自硬撑。</p></div>
+  <div class="rhythm-step"><div class="step-mark">④ 再交流</div><b>共同看思路、错误和进步</b><p>让 Lemon 先自查或解释，成人补充反馈，再商量下一小步。</p></div>
+ </div>
+ <div class="inline-note">比如数学：先讲自己怎么算 → 一起拆十位乘法 → 自己试两题 → 讨论差异。比如抄写：共同确认笔顺 → 独立写一段 → 一起看看是否顺畅。<strong>成人参与教学，不代替思考；独立练习也不是放任他一个人做到底。</strong></div>
+ <div class="divider"></div>
+ <div class="rules">
+  <div class="rule"><b>每做一题都想让成人确认</b><p>成人先一起示范一个，再让 Lemon 试一小组；允许提问，鼓励先说想法，再一起看结果。</p></div>
+  <div class="rule"><b>走神、想看书或剪指甲</b><p>先判断是累了、不会还是无聊；可换成讲思路、一起做一步或按约休息，不只重复催促。</p></div>
+  <div class="rule"><b>真的不会做</b><p>成人把困难缩小到一步，提问或示范；再把下一步还给 Lemon，不替他做完整题。</p></div>
+  <div class="rule"><b>到点还没完成</b><p>记录剩余，区分任务量不合理与执行困难；学校必交任务另行安排，不默认无限延长。</p></div>
+ </div>
+</section>
+<section class="card" id="finish">
+ <div class="cardhead"><div class="num">4</div><div><h2>结束：回顾一起学会了什么</h2><p class="hint">不只核对作业量，也看 Lemon 能不能讲出一点方法、完成一次独立尝试，以及成人什么引导真正有用。</p></div></div>
+ <div id="routineResults" style="display:none" class="callout"><strong>每日例行完成情况</strong><div id="routineChecks"></div></div>
+ <label class="checkrow"><input id="done0" type="checkbox"><span>已完成任务 1 的约定部分</span></label>
+ <label class="checkrow"><input id="done1" type="checkbox"><span>已完成任务 2 的约定部分</span></label>
+ <label class="checkrow"><input id="done2" type="checkbox"><span>已完成任务 3 的约定部分（若安排）</span></label>
+ <label class="checkrow"><input id="promiseDone" type="checkbox"><span>完成了 Lemon 自己负责的那件事（可以兑现约定奖励）</span></label>
+ <div class="form-grid" style="margin-top:12px">
+  <div class="field"><label for="win">Lemon 今天自己想明白或完成了什么？</label><input id="win" placeholder="例如：能解释竖式的十位为何错位"></div>
+  <div class="field"><label for="next">剩余任务怎么处理？</label><input id="next" placeholder="例如：作文剩200字，明天另行安排"></div>
+  <div class="field"><label for="guide">今天什么互动 / 引导最有效？</label><input id="guide" placeholder="例如：一起做例题后，能自己说明方法"></div>
+ </div>
+ <div class="actions"><button id="syncPool" class="secondary" type="button">将完成情况回写每周任务池</button><button id="copy" type="button">复制今日约定与反馈</button><button id="print" type="button" class="secondary">打印 / 保存 PDF</button><button id="reset" type="button" class="ghost">清空本次记录</button></div>
+ <div class="notice">共学任务可从<a href="./pool.html">任务池</a>带入，结束后手动回写结果。编辑内容仅保存在当前浏览器，家长与家教换设备不会自动同步；可以复制文本发给家教。<span id="status" role="status" aria-live="polite"></span></div>
+</section>
+</div>
+<aside class="side">
+ <section class="card"><div class="summaryhead">TODAY'S AGREEMENT</div><div class="summarytitle" id="summaryDuration">90 分钟</div><p class="hint" id="summaryDate">今天的共同约定</p><div class="divider"></div><div style="font-size:13px;font-weight:750">Lemon 的决定</div><ul class="bul"><li>先做：<b id="summaryFirst">数学作业</b></li><li>自己负责：<b id="summaryPromise">说出想法，再自己试一步</b></li><li>奖励：<b id="summaryReward">听故事 20 分钟</b></li></ul><div class="divider"></div><div class="callout"><strong>成人也需要履行约定</strong><p>学习时不刷短剧；要参与讲解、提问和反馈，但不包办思考、不逐题判卷。做完已约定部分就收尾，不临时加题。</p></div></section>
+ <section class="card"><div class="summaryhead">可以直接这样说</div><div class="talk" style="margin-top:10px"><p>“今天我们就学 <b id="speechDuration">90</b> 分钟。这几件事得做，我先帮你理好了。”</p><p>“你选先做哪件。咱们先一起看看怎么做，再让你自己试试。”</p><p>“你自己负责 <b id="speechPromise">说出想法，再自己试一步</b>。做到就按约定领奖励。”</p><p>“到时间我们一起看看完成了什么、还剩什么，不临时加题。”</p></div></section>
+ <section class="card smallprint"><h3>这不是长期训练计划</h3><p class="hint">先把今天这一堂课做好。每次任务不同，可以重新协商，但成人和家教使用同一套原则。下一次只根据真实结果调整最需要的一处。</p><p class="hint" style="margin-top:10px"><a href="https://github.com/feng-y/lemon-learning/blob/main/active/CURRENT.md" target="_blank" rel="noopener">参考 Lemon 学习项目当前执行原则 ↗</a></p></section>
+</aside>
+</main>
+<footer class="foot">Lemon · 单次学习约定 · 独立静态页面，无账号、无服务端收集 · 数据仅保存在本机浏览器</footer>
+</div>
+<script>
+(function(){
+'use strict';
+var storageKey='lemon-single-session-v1', poolKey='lemon-weekly-pool-v1', handoffKey='lemon-session-import-v1', activeKey='lemon-session-active-v1';
+var fields=['sessionDate','duration','task0','task1','task2','goal0','goal1','goal2','first','promise','reward','rewardOther','join','adult','done0','done1','done2','promiseDone','win','next','guide'];
+var defaults={},savedRoutineDone={};
+var $=function(id){return document.getElementById(id)};
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+$('sessionDate').value=today();
+function activeSession(){try{return JSON.parse(localStorage.getItem(activeKey)||'null')}catch(e){return null}}
+function taskNames(){
+ var names=[0,1,2].map(function(n){return $('task'+n).value.trim()}).filter(Boolean);
+ var active=activeSession();
+ if(active&&$('sessionDate').value===active.date&&Array.isArray(active.routines)){active.routines.forEach(function(t){if(t.title&&names.indexOf(t.title)<0)names.push(String(t.title))})}
+ return names
+}
+function renderRoutines(){
+ var active=activeSession(),rs=active&&active.date===$('sessionDate').value&&Array.isArray(active.routines)?active.routines:[];
+ var plan=$('routinePlan'),results=$('routineResults'),checks=$('routineChecks');
+ checks.replaceChildren();
+ plan.style.display=rs.length?'block':'none';results.style.display=rs.length?'block':'none';
+ if(rs.length){
+  plan.textContent='今天另含新东方每日例行：'+rs.map(function(t){return t.title+'（约'+t.minutes+'分钟）'}).join('、')+'。可以融入任一共学阶段，不额外延长总时长。';
+  rs.forEach(function(t){
+   var label=document.createElement('label');label.className='checkrow';
+   var input=document.createElement('input');input.type='checkbox';input.dataset.routineDone=t.id;input.checked=!!savedRoutineDone[t.id];
+   input.addEventListener('change',save);
+   var name=document.createElement('span');name.textContent=t.title+' · 已完成今天约定的部分';
+   label.appendChild(input);label.appendChild(name);checks.appendChild(label);
+  });
+ }
+ [0,1,2].forEach(function(i){$('done'+i).parentElement.style.display=$('task'+i).value.trim()?'flex':'none'});
+}
+function setText(id,value){$(id).textContent=value}
+function updateFirst(){
+ var s=$('first'),was=s.value,names=taskNames(),chosen=names.indexOf(was)>=0?was:(names[0]||'待确定');
+ s.replaceChildren();
+ names.forEach(function(name){var opt=document.createElement('option');opt.value=name;opt.textContent=name;s.appendChild(opt)});
+ if(!names.length){var o=document.createElement('option');o.value='待确定';o.textContent='待确定';s.appendChild(o)}
+ s.value=chosen;
+}
+function mins(){return Number($('duration').value)||90}
+function segments(){
+ if(mins()===60)return [5,14,4,14,4,14,5];
+ if(mins()===75)return [5,19,4,19,4,19,5];
+ return [5,23,5,23,5,24,5];
+}
+var blocks=['','block1','','block2','','block3',''];
+var blockChoice={block1:'',block2:'',block3:''};
+function buildAgenda(){
+ var specs=[
+ ['共同确认','看清今天学什么、做什么，Lemon 参与选择'],
+ ['共学 A','先聊想法 → 成人引导示范 → 自己试一小段 → 一起反馈'],
+ ['休息','活动、喝水、换一换姿势'],
+ ['共学 B','针对第二个任务：共同讨论、短时尝试、检查理解'],
+ ['休息','按约定休息，不需要争取'],
+ ['共学 C','根据实际进度调整：必要时再教一遍、继续练习或收尾'],
+ ['回顾与兑现','Lemon 说说学会了什么，成人确认进步、剩余与奖励']
+ ];
+ var periods=segments(),offset=0,root=$('agenda'),old={};
+ ['block1','block2','block3'].forEach(function(id){var e=$(id);old[id]=e?e.value:blockChoice[id]});
+ root.replaceChildren();
+ specs.forEach(function(sp,i){
+ var m=periods[i],r=document.createElement('div');r.className='schedule-row';
+ var left=document.createElement('div');left.className='time';left.textContent=offset+'–'+(offset+m)+'′';
+ var sm=document.createElement('small');sm.textContent=m+' 分钟';left.appendChild(sm);
+ var right=document.createElement('div');var name=document.createElement('div');name.className='schedule-name';name.textContent=sp[0];right.appendChild(name);
+ var desc=document.createElement('div');desc.className='schedule-desc';desc.textContent=sp[1];right.appendChild(desc);
+ if(blocks[i]){
+ var select=document.createElement('select');select.id=blocks[i];select.setAttribute('aria-label',sp[0]+'安排的任务');
+ var opts=taskNames();if(!opts.length)opts=['待确定'];
+ opts.forEach(function(t){var o=document.createElement('option');o.textContent=t;o.value=t;select.appendChild(o)});
+ var chosen=(i===1?$('first').value:(old[blocks[i]]||opts[Math.min((i-1)/2,opts.length-1)]));
+ if(opts.indexOf(chosen)<0)chosen=opts[Math.min(Math.floor(i/2),opts.length-1)]||opts[0];
+ select.value=chosen;blockChoice[blocks[i]]=chosen;
+ select.addEventListener('change',function(){blockChoice[this.id]=this.value;save()});
+ right.appendChild(select);
+ }
+ r.appendChild(left);r.appendChild(right);root.appendChild(r);offset+=m;
+ });
+}
+function rewardValue(){return $('reward').value==='other'?($('rewardOther').value.trim()||'待和家长确定'):$('reward').value}
+function render(){
+ updateFirst();
+ buildAgenda();
+ setText('summaryDuration',mins()+' 分钟');
+ setText('summaryDate',$('sessionDate').value||'今天的共同约定');
+ setText('summaryFirst',$('first').value);
+ setText('summaryPromise',$('promise').value);
+ setText('summaryReward',rewardValue());
+ setText('speechDuration',String(mins()));
+ setText('speechPromise',$('promise').value);
+ $('rewardOther').disabled=$('reward').value!=='other';
+}
+function refreshSummary(){
+ setText('summaryDuration',mins()+' 分钟');
+ setText('summaryDate',$('sessionDate').value||'今天的共同约定');
+ setText('summaryFirst',$('first').value||'待确定');
+ setText('summaryPromise',$('promise').value);
+ setText('summaryReward',rewardValue());
+ setText('speechDuration',String(mins()));
+ setText('speechPromise',$('promise').value);
+ $('rewardOther').disabled=$('reward').value!=='other';
+}
+function save(){
+ var data={};
+ fields.forEach(function(id){var e=$(id);data[id]=e.type==='checkbox'?e.checked:e.value});
+ ['block1','block2','block3'].forEach(function(id){var e=$(id);data[id]=e?e.value:(blockChoice[id]||'')});
+ data.routineDone={};$('routineChecks').querySelectorAll('[data-routine-done]').forEach(function(e){data.routineDone[e.dataset.routineDone]=e.checked});savedRoutineDone=data.routineDone;
+ try{localStorage.setItem(storageKey,JSON.stringify(data))}catch(e){}
+ refreshSummary();
+}
+function restore(){
+ var raw;try{raw=JSON.parse(localStorage.getItem(storageKey)||'null')}catch(e){raw=null}
+ if(!raw){render();renderRoutines();return}
+ fields.forEach(function(id){if(Object.prototype.hasOwnProperty.call(raw,id)){var e=$(id);if(e.type==='checkbox')e.checked=!!raw[id];else e.value=raw[id]}});
+ ['block1','block2','block3'].forEach(function(id){blockChoice[id]=raw[id]||''});
+ savedRoutineDone=raw.routineDone||{};
+ render();renderRoutines();
+ var savedFirst=raw.first;
+ if(savedFirst && taskNames().indexOf(savedFirst)>=0){$('first').value=savedFirst;buildAgenda()}
+ refreshSummary();
+}
+function importFromPool(){
+ if(!/(?:\?|&)fromPool=1(?:&|$)/.test(window.location.search))return;
+ var payload;try{payload=JSON.parse(localStorage.getItem(handoffKey)||'null')}catch(e){payload=null}
+ if(!payload||!Array.isArray(payload.tasks)||!Array.isArray(payload.routines||[])||(!payload.tasks.length&&!(payload.routines||[]).length)){showStatus(' · 无可导入的任务，请先到任务池选择');return}
+ if(!['60','75','90'].includes(String(payload.duration))){showStatus(' · 导入的时长无效');return}
+ $('sessionDate').value=payload.date;
+ $('duration').value=String(payload.duration);
+ for(var i=0;i<3;i++){
+  var task=payload.tasks[i];
+  $('task'+i).value=task?String(task.title||''):'';
+  $('goal'+i).value=task?String(task.goal||''):'';
+  $('done'+i).checked=false;
+ }
+ $('promiseDone').checked=false;$('win').value='';$('next').value='';$('guide').value='';
+ $('join').checked=false;$('adult').checked=false;
+ blockChoice={block1:'',block2:'',block3:''};savedRoutineDone={};
+ try{localStorage.setItem(activeKey,JSON.stringify(payload))}catch(e){}
+ render();renderRoutines();save();
+ showStatus(' · 已从每周任务池载入，可与 Lemon 再确认顺序、责任和奖励');
+ try{window.history.replaceState(null,'',window.location.pathname)}catch(e){}
+}
+function syncPool(){
+ var active;try{active=JSON.parse(localStorage.getItem(activeKey)||'null')}catch(e){active=null}
+ if(!active||(!active.tasks?.length&&!active.routines?.length)){showStatus(' · 本次不是从任务池载入，请先回到任务池手动标记');return}
+ if($('sessionDate').value!==active.date){showStatus(' · 日期已改变，请在任务池中手动核对后更新');return}
+ var pool;try{pool=JSON.parse(localStorage.getItem(poolKey)||'null')}catch(e){pool=null}
+ if(!pool||!pool.done){showStatus(' · 找不到本地任务池，请先到任务池确认');return}
+ var count=0,skipped=0;
+ (active.tasks||[]).forEach(function(task,i){
+  if(i>=3||!task||!task.id)return;
+  if($('task'+i).value!==task.title){skipped++;return}
+  var key=active.week+'|'+task.id;
+  pool.done[key]=$('done'+i).checked;
+  if($('done'+i).checked)count++;
+ });
+ (active.routines||[]).forEach(function(task){
+  if(!task||!task.id)return;
+  var checkbox=Array.from($('routineChecks').querySelectorAll('[data-routine-done]')).find(function(x){return x.dataset.routineDone===task.id});
+  if(!checkbox)return;
+  pool.done[active.date+'|'+task.id]=checkbox.checked;
+  if(checkbox.checked)count++;
+ });
+ try{localStorage.setItem(poolKey,JSON.stringify(pool));showStatus(' · 已回写 '+count+' 项完成状态'+(skipped?'；'+skipped+' 项名称更改需手动核对':''))}
+ catch(e){showStatus(' · 回写失败，请先复制记录')}
+}
+function line(id){return $(id).value.trim()||'未填写'}
+function check(id){return $(id).checked?'是':'否'}
+function agreement(){
+ var t='Lemon｜一次学习的共同约定\n日期：'+line('sessionDate')+'  总时长：'+mins()+'分钟（含休息）\n\n';
+ t+='【任务与标准】\n';
+ [0,1,2].forEach(function(n){if(line('task'+n)!=='未填写'){t+=(n+1)+'. '+line('task'+n)+'：'+line('goal'+n)+'\n'}});
+ $('routineChecks').querySelectorAll('[data-routine-done]').forEach(function(e){t+=(e.checked?'[已完成] ':'[待完成] ')+e.parentElement.textContent.trim()+'\n'});
+ t+='\n【共同决定】\n';
+ t+='先做：'+$('first').value+'\nLemon 负责：'+$('promise').value+'\n额外奖励：'+rewardValue()+'\n';
+ t+='已共同确认：'+check('join')+'；成人确认不临时加量：'+check('adult')+'\n\n';
+ t+='【时段安排】\n';
+ var ps=segments(),offset=0,labels=['共同确认','共学 A','休息','共学 B','休息','共学 C','回顾'];
+ ps.forEach(function(m,i){t+=offset+'–'+(offset+m)+'分钟：'+labels[i]+(blocks[i]?'（'+($(blocks[i])?$(blocks[i]).value:'待确定')+'）':'')+'\n';offset+=m});
+ t+='\n【结束反馈】\n';
+ [0,1,2].forEach(function(n){t+='任务'+(n+1)+'完成：'+check('done'+n)+'\n'});
+ t+='个人责任完成：'+check('promiseDone')+'\nLemon 自己理解或完成：'+line('win')+'\n成人有效的引导方式：'+line('guide')+'\n剩余安排：'+line('next')+'\n';
+ return t;
+}
+function showStatus(text){setText('status',text)}
+$('copy').addEventListener('click',function(){
+ var value=agreement();
+ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(value).then(function(){showStatus(' · 已复制')},function(){fallback(value)})}
+ else fallback(value);
+});
+function fallback(text){
+ var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();
+ try{document.execCommand('copy');showStatus(' · 已复制')}catch(e){showStatus(' · 复制失败，请用打印保存')}
+ ta.remove();
+}
+$('print').addEventListener('click',function(){window.print()});
+$('syncPool').addEventListener('click',syncPool);
+$('reset').addEventListener('click',function(){
+ if(!window.confirm('清空本次记录，恢复到默认示例？'))return;
+ try{localStorage.removeItem(storageKey);localStorage.removeItem(activeKey)}catch(e){}
+ fields.forEach(function(id){if(!Object.prototype.hasOwnProperty.call(defaults,id))return;var e=$(id);if(e.type==='checkbox')e.checked=defaults[id];else e.value=defaults[id]});
+ $('sessionDate').value=today();
+ blockChoice={block1:'',block2:'',block3:''};savedRoutineDone={};
+ render();renderRoutines();save();showStatus(' · 已恢复默认示例');
+});
+fields.forEach(function(id){var e=$(id);defaults[id]=e.type==='checkbox'?e.checked:e.value});
+restore();
+importFromPool();
+fields.forEach(function(id){
+ var e=$(id);
+ e.addEventListener(e.type==='checkbox'||e.tagName==='SELECT'||e.type==='date'?'change':'input',function(){
+ if(id==='task0'||id==='task1'||id==='task2'||id==='duration'){var firstWas=$('first').value;render();renderRoutines();if(taskNames().indexOf(firstWas)>=0){$('first').value=firstWas;blockChoice.block1=firstWas;buildAgenda()}}
+ else if(id==='first'){blockChoice.block1=$('first').value;buildAgenda()}
+ else if(id==='sessionDate'){render();renderRoutines()}
+ else if(id==='reward'){$('rewardOther').disabled=$('reward').value!=='other'}
+ save();
+ });
+});
+})();
+</script>
+</body>
+</html>
