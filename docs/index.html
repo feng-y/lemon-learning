@@ -40,6 +40,12 @@ h2{color:var(--ink);font-size:20px;letter-spacing:-.025em;margin:0}h3{color:var(
 .lessons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;list-style:none;margin:0;padding:0}
 .lessons li{border:1px solid #e4ebe5;background:white;border-radius:7px;display:flex;align-items:center;gap:8px;padding:7px 9px;min-width:0;color:#344a3f;font-size:12px}
 .lesson-no{color:#8a998f;font-size:10px;white-space:nowrap}.school-note{font-size:11px;color:#78877e;margin:7px 0 0}
+.extra-heading{font-size:12px;font-weight:800;color:var(--green);margin:13px 0 6px}
+.extra-classes{display:flex;flex-wrap:wrap;gap:7px}
+.extra-class{background:#eef5f0;border:1px solid #cfe2d6;border-radius:8px;padding:7px 10px;color:#315944;font-size:12px}
+.extra-class b{color:#24553d;margin-right:6px}
+.class-busy-note{font-size:11px;color:#657667;margin:8px 0 0}
+.class-day-flag{display:block;font-size:10px;color:#48745c;font-weight:800;margin-top:1px;line-height:1.2}
 @media(max-width:590px){.lessons{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .section-name{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin:16px 0 8px}
 .section-name strong{color:var(--ink);font-size:13px}.section-name span{font-size:11px;color:var(--muted)}
@@ -102,6 +108,11 @@ details p,details li{font-size:12px;color:var(--muted)}
  <div class="school-head"><strong id="schoolDayTitle">当天课表</strong><small>用于核对作业，不自动增加练习</small></div>
  <ol class="lessons" id="schoolLessons"></ol>
  <p class="school-note" id="schoolNote"></p>
+ <div id="extraClassSection" hidden>
+  <div class="extra-heading">固定课外课程</div>
+  <div class="extra-classes" id="extraClasses"></div>
+  <p class="class-busy-note">上课占用独立时间，不计入这里的家庭共学时段；当日任务量应考虑已有课程与精力。</p>
+ </div>
 </div>
 <div class="section-name"><strong>每日例行</strong><span>新东方 · 计入时间预算，不占主任务名额</span></div>
 <div id="dailyList"></div>
@@ -207,6 +218,12 @@ const schoolTimetable=[
  ['语文','数学','音乐','道德与法治','体育','英语'],
  ['语文','综合实践','信息','英语','趣味体育','科学']
 ];
+// 课外固定上课时间不等同于作业，只有实际布置的作业才进入任务池。
+const extraClassSchedule={
+ 2:[{period:'晚上',subject:'有道英语 Power Up 3'}],
+ 5:[{period:'上午',subject:'数学培优'},{period:'晚上',subject:'有道英语 Power Up 3'}],
+ 6:[{period:'下午',subject:'新东方英语 PU2'}]
+};
 const labels={school:'课内必做',extra:'课外巩固',course:'课程作业',writing:'书写训练'};
 const fixed=[
  {id:'course-pu3-wed',name:'有道 Power Up 3 · 周三作业',type:'course',days:[2],minutes:20,goal:'根据当次作业要求共同确认完成范围',note:'周三课程作业，完成期限以教师实际要求为准'},
@@ -277,9 +294,12 @@ function bindPoolButtons(root){
 }
 function renderSchoolDay(){
  const lessons=schoolTimetable[day]||[];
+ const extra=extraClassSchedule[day]||[];
  $('schoolDayTitle').textContent=weekdays[day]+' · '+(lessons.length?'校内6节课':'无校内课表');
  $('schoolLessons').innerHTML=lessons.map((subject,i)=>'<li><span class="lesson-no">第'+(i+1)+'节</span><span>'+esc(subject)+'</span></li>').join('');
- $('schoolNote').textContent=lessons.length?'先核对老师实际布置的作业，再决定今天加入哪些任务；上课≠新增作业。':'周末无校内课程安排；学校遗留作业与课外课程仍按实际任务池处理。';
+ $('schoolNote').textContent=lessons.length?'先核对老师实际布置的作业，再决定今天加入哪些任务；上课≠新增作业。':'周末没有校内课程，仍需按实际作业安排家庭学习。';
+ $('extraClassSection').hidden=!extra.length;
+ $('extraClasses').innerHTML=extra.map(c=>'<div class="extra-class"><b>'+esc(c.period)+'</b>'+esc(c.subject)+'</div>').join('');
 }
 function renderWeek(){
  $('weekLabel').textContent=dayString(week)+' ～ '+dayString(plusDays(week,6));
@@ -287,7 +307,7 @@ function renderWeek(){
  $('heroCount').textContent=weekdays[day]+' · '+selectedTasks().length+' 项主任务';
  $('days').innerHTML=weekdays.map((label,i)=>{
   const d=plusDays(week,i);
-  return '<button class="day'+(i===day?' active':'')+(dayString(d)===dayString(now)?' today':'')+'" data-day="'+i+'" type="button"><span>'+label+'</span><b>'+d.getDate()+'</b></button>';
+  return '<button class="day'+(i===day?' active':'')+(dayString(d)===dayString(now)?' today':'')+'" data-day="'+i+'" type="button"><span>'+label+'</span><b>'+d.getDate()+'</b>'+(extraClassSchedule[i]?.length?'<span class="class-day-flag">有课</span>':'')+'</button>';
  }).join('');
  $('days').querySelectorAll('[data-day]').forEach(b=>b.addEventListener('click',()=>{day=Number(b.dataset.day);render()}));
  renderSchoolDay();
@@ -384,6 +404,8 @@ function copyText(){
  const choice=d.reward==='other'?(d.otherReward||'待确认'):d.reward;
  const lines=[
   'Lemon｜'+date+' 共学约定（'+duration()+'分钟）',
+  '【当天固定课外课程（单独占用时间）】',
+  ...((extraClassSchedule[day]||[]).map(c=>c.period+' · '+c.subject).length?(extraClassSchedule[day]||[]).map(c=>c.period+' · '+c.subject):['无']),
   '【任务池选出】',
   ...all.map((t,i)=>(i+1)+'. '+t.name+'（约'+taskEstimate(t)+'分钟） · '+(t.goal||'')),
   '【共同约定】',
