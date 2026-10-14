@@ -161,7 +161,7 @@ details p,details li{font-size:12px;color:var(--muted)}
 .priority-label{font-size:11px;color:#59745d;font-weight:750}
 .priority-select{display:inline-block;width:auto!important;max-width:130px;padding:4px 7px!important;font-size:11px!important;margin:4px 0}
 .alloc-input{width:66px!important;padding:5px 6px!important;font-size:12px!important;text-align:center}
-.plan-recommendation{margin-top:12px;border-top:1px solid #dfe7df;padding-top:11px;font-size:12px;line-height:1.7;color:#51685a}
+.plan-recommendation{margin-top:12px;border-top:1px solid #dfe7df;padding-top:11px;font-size:12px;line-height:1.7;color:#51685a}.plan-recommendation-primary{border:1px solid #d6e5d9;border-radius:11px;background:#f7faf7;padding:12px 15px;margin:0 0 15px}
 .plan-recommendation strong{color:#2d5841}
 .plan-recommendation .proposal{margin:4px 0;padding-left:16px;color:#5a6f62}
 .selected-task input[type=number]{vertical-align:middle}
@@ -232,6 +232,7 @@ details p,details li{font-size:12px;color:var(--muted)}
 <section id="stage-plan" class="journey-panel" aria-labelledby="plan-heading">
 <header class="stage-heading"><span>阶段 2 / 3 · 正在规划</span><h2 id="plan-heading">制定规划</h2><p>把目标转成实际任务，控制任务量，与 Lemon 一起确定时间、顺序、自主责任和奖励。</p></header>
 <div class="goal-summary"><span>今天的目标</span><b id="goalPlanSummary">尚未确定，可以先核对任务</b><small id="verifyPlanSummary"></small></div>
+<div id="planRecommendation" class="plan-recommendation plan-recommendation-primary" aria-live="polite"></div>
 <div class="planning-logic" aria-label="今天做什么的优先级判断">
  <div><b>P0 · 必须完成</b><span>真实必交、确认的截止要求</span></div>
  <div><b>P1 · 值得投入</b><span>当前薄弱点、课前准备与必要例行</span></div>
@@ -277,7 +278,7 @@ details p,details li{font-size:12px;color:var(--muted)}
 <div class="row" style="margin-top:10px;justify-content:space-between"><small id="budgetText">可用时间</small><b id="usedText">0分钟</b></div>
 <div class="meter" id="meter"><i id="meterFill" style="width:0"></i></div>
 <p id="budgetNote">估计时间不是硬性考核。留出教学讨论与休息。</p>
-<div id="planRecommendation" class="plan-recommendation" aria-live="polite"></div>
+
 </div>
 <div class="formgrid">
 <div class="field wide"><label for="firstTask">Lemon 选择先做</label><select id="firstTask"></select></div>
