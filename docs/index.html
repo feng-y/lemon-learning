@@ -163,7 +163,7 @@ details p,details li{font-size:12px;color:var(--muted)}
 .alloc-input{width:66px!important;padding:5px 6px!important;font-size:12px!important;text-align:center}
 .plan-recommendation{margin-top:12px;border-top:1px solid #dfe7df;padding-top:11px;font-size:12px;line-height:1.7;color:#51685a}.plan-recommendation-primary{border:1px solid #d6e5d9;border-radius:11px;background:#f7faf7;padding:12px 15px;margin:0 0 15px}
 .plan-recommendation strong{color:#2d5841}
-.plan-recommendation .proposal{margin:4px 0;padding-left:16px;color:#5a6f62}
+.plan-recommendation .proposal{margin:4px 0;padding-left:16px;color:#5a6f62}.plan-suggestion-actions{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0 0 13px}.plan-suggestion-actions span{font-size:11px;color:#647b6b}
 .selected-task input[type=number]{vertical-align:middle}
 @media(max-width:590px){.planning-logic{grid-template-columns:1fr;gap:6px}.planning-logic>div{padding:9px 12px}.planning-logic span{display:inline;margin-left:10px}}
 
@@ -233,6 +233,10 @@ details p,details li{font-size:12px;color:var(--muted)}
 <header class="stage-heading"><span>阶段 2 / 3 · 正在规划</span><h2 id="plan-heading">制定规划</h2><p>把目标转成实际任务，控制任务量，与 Lemon 一起确定时间、顺序、自主责任和奖励。</p></header>
 <div class="goal-summary"><span>今天的目标</span><b id="goalPlanSummary">尚未确定，可以先核对任务</b><small id="verifyPlanSummary"></small></div>
 <div id="planRecommendation" class="plan-recommendation plan-recommendation-primary" aria-live="polite"></div>
+<div class="plan-suggestion-actions">
+<button type="button" id="suggestPlan" class="secondary">根据优先级建议今天的任务</button>
+<span>仅使用已有作业事实；先保留P0，再考虑能放进时间的P1。成人可以继续修改。</span>
+</div>
 <div class="planning-logic" aria-label="今天做什么的优先级判断">
  <div><b>P0 · 必须完成</b><span>真实必交、确认的截止要求</span></div>
  <div><b>P1 · 值得投入</b><span>当前薄弱点、课前准备与必要例行</span></div>
@@ -532,6 +536,22 @@ function updateGoalSummaries(){
  $('verifyPlanSummary').textContent=verify?'验收标准：'+verify:'验收标准待确认';
  $('verifyExecuteSummary').textContent=verify?'验收标准：'+verify:'验收标准待确认';
 }
+function suggestTasksForToday(){
+ const allowed=dayCandidates().filter(t=>!t.days||t.days.includes(day));
+ const ranked=allowed.slice().sort((a,b)=>{
+  const pa=priorityWeights[taskPriority(a)],pb=priorityWeights[taskPriority(b)];
+  return pa-pb||(a.dueDate||'9999-12-31').localeCompare(b.dueDate||'9999-12-31');
+ });
+ const candidates=ranked.filter(t=>taskPriority(t)==='p0').slice(0,3);
+ const dailyBudget=dailyTasks().filter(t=>!pool.done[doneKey(t)]).reduce((n,t)=>n+assignedMinutes(t),0);
+ let remaining=capacity()-dailyBudget-candidates.reduce((n,t)=>n+assignedMinutes(t),0);
+ for(const task of ranked){
+  if(candidates.length>=3)break;
+  if(taskPriority(task)!=='p1'||candidates.some(x=>x.id===task.id))continue;
+  if(assignedMinutes(task)<=remaining){candidates.push(task);remaining-=assignedMinutes(task)}
+ }
+ return candidates.map(t=>t.id);
+}
 function renderPlanningRecommendation(){
  const available=capacity(),chosen=activeTasks(),used=planUsedMinutes();
  const ordered=chosen.slice().sort((a,b)=>(priorityWeights[taskPriority(a)]??1)-(priorityWeights[taskPriority(b)]??1));
@@ -696,6 +716,14 @@ $('addWriting').addEventListener('click',()=>{
  if(existing){existing.name=name;existing.minutes=10;existing.goal='先一起确认规范，再短时书写并讨论；量不适合就调整'}
  else addTask(name,'writing',10,'先一起确认规范，再短时书写并讨论；量不适合就调整');
  save();render();showStatus('本次书写梯次已加入任务池，是否安排由成人判断');
+});
+$('suggestPlan').addEventListener('click',()=>{
+ const ids=suggestTasksForToday();
+ if(!ids.length){showStatus('任务池尚无可建议的P0/P1任务：先核对学校实际作业或课程作业。');return}
+ if(selectedIds().length&&!window.confirm('按今天的优先级重新选择任务？这会替换本日当前已选主任务，已记录的完成状态不变。'))return;
+ pool.selected[dateKey()]=ids;
+ save();render();
+ showStatus('已根据P0/P1生成建议任务；请核对截止日期和具体量，并调整每项时间。');
 });
 $('duration').addEventListener('change',e=>{draft().duration=Number(e.target.value);render()});
 $('firstTask').addEventListener('change',e=>{draft().first=e.target.value;draft().blocks.block1=e.target.value;render()});
