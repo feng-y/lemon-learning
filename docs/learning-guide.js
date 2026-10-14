@@ -7,7 +7,14 @@ const $=id=>document.getElementById(id);
 const STORAGE="lemon-curriculum-local-v1";
 const NAMES={chinese:"语文 · 人教四上",math:"数学 · 北师大四上",pep:"英语 · PEP四上",pu3:"有道 · Power Up 3",pu2:"新东方 · PU2"};
 const weekLabels=["周一","周二","周三","周四","周五","周六","周日"];
-const mathUnits=["认识更大的数","线与角","整数乘法（二）","我们生活的空间（二）","运算律","图形的奥秘","运用数量关系解决问题","数据的表示和分析（一）"];
+// 家庭串联知识顺序来自 active/curriculum/math.md，不能替代学校课次。
+const mathUnits=["认识更大的数","整数乘法（二）","运算律","运用数量关系解决问题","线与角","我们生活的空间（二）","图形的奥秘","数据的表示和分析（一）"];
+function mathNextFamily(){
+ const explicit=nameOf("math","next");if(explicit)return explicit;
+ const current=nameOf("math","current");
+ const idx=mathUnits.findIndex(unit=>current.includes(unit));
+ return idx>=0&&idx+1<mathUnits.length?mathUnits[idx+1]:"";
+}
 const fallback={updatedAt:"1970-01-01T00:00:00Z",subjects:{
  chinese:{current:"",next:"",status:"unknown"},math:{current:"",next:"",status:"unknown"},
  pep:{current:"",next:"",status:"unknown"},pu3:{current:"",next:"",status:"unknown"},pu2:{current:"",next:"",status:"unknown"}
@@ -45,8 +52,13 @@ function subjectAdvice(key,type){
  if(key==="math"){
   const signal=mathSignal(),curr=nameOf("math","current"),next=nameOf("math","next");
   if(curr){
-   return (type==="preview"?("先看 "+(next||curr)+" 的前置知识；观察例题情境，留下一个问题。"):
-     ("围绕 "+curr+" 复述一个算理，再做一道能独立解释的新题；不用增加机械题量。"));
+   const family=mathNextFamily();
+   if(type==="preview")return next?
+     ("先看 "+next+" 的前置知识；观察例题情境，留下一个问题。"):
+     ("学校下一课页码未同步，围绕 "+curr+" 回想一种方法并猜测下节课会用到哪里；不提前刷完整单元。");
+   if(progress("math").status==="mastered"&&family)
+     return "已标记掌握 "+curr+"；家庭知识线可继续预热 "+family+"，但学校进度与当天实际作业仍优先。";
+   return "围绕 "+curr+" 复述一个算理，再做一道能独立解释的新题；不用增加机械题量。";
   }
   if(signal && type!=="preview")return "10月12日发现十位乘法数位问题：把236×42拆为236×2+236×40，说清第二行为何左移，再独立试一题。";
   return type==="preview"?"先核对数学课下一节内容；找一道生活中的例子，回想相关旧知识，观察后带着疑问上课。":"先查看今天学校实际讲到哪页；完成必要作业后，挑一道代表题说清思路，当前单元仍待同步。";
@@ -148,6 +160,7 @@ function renderProgressForm(){
   for(const [field,placeholder] of [["current","当前学到：单元 / 课文 / 页码"],["next","接下来：下一课 / 下一个学习点"]]){
    const input=document.createElement("input");
    input.type="text";input.value=x[field]||"";input.placeholder=placeholder;input.setAttribute("aria-label",label+" "+placeholder);
+   if(key==="math"){input.setAttribute("list","guideMathUnits")}
    input.dataset.subject=key;input.dataset.field=field;
    input.addEventListener("change",handleFieldChange);
    grid.appendChild(input);
@@ -156,7 +169,13 @@ function renderProgressForm(){
   const options=[["unknown","进度待同步"],["learning","正在学习"],["needs-review","需要巩固"],["mastered","已掌握"]];
   options.forEach(([v,l])=>{const o=document.createElement("option");o.value=v;o.textContent=l;select.appendChild(o)});
   select.value=x.status||"unknown";select.addEventListener("change",handleFieldChange);
-  grid.appendChild(select);block.appendChild(grid);form.appendChild(block);
+  grid.appendChild(select);block.appendChild(grid);
+  if(key==="math"&&nameOf("math","current")){
+   const hint=document.createElement("div");hint.className="school-note";
+   hint.textContent="家庭知识串联下一步："+(mathNextFamily()||"按当前单元完成情况判断")+"；它不是学校下一课的自动推断。";
+   block.appendChild(hint);
+  }
+  form.appendChild(block);
  }
 }
 function handleFieldChange(event){
@@ -164,6 +183,7 @@ function handleFieldChange(event){
  if(!state[key])state[key]={current:"",next:"",status:"unknown"};
  state[key][field]=e.value;
  persistLocal();renderToday();renderWeek();
+ if(key==="math"&&(field==="current"||field==="next"))renderProgressForm();
  showStatus("学习进度已保存在本浏览器。可以点击“复制进度摘要”发给我，更新网站的教材进度源。");
 }
 function persistLocal(){
