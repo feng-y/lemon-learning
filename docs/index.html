@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f7f3"><meta name="description" content="Lemon 任务标尺：区分参考用时、真实表现和本次约定，通过可兑现的小进步建立独立任务完成能力与信心。"><title>Lemon · 任务完成与信心</title><link rel="stylesheet" href="./task-ruler.css?v=20261014-1"><link rel="stylesheet" href="./learning-background.css?v=20261014-1"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f7f3"><meta name="description" content="Lemon 任务标尺：区分参考用时、真实表现和本次约定，通过可兑现的小进步建立独立任务完成能力与信心。"><title>Lemon · 任务完成与信心</title><link rel="stylesheet" href="./task-ruler.css?v=20261014-1"><link rel="stylesheet" href="./learning-background.css?v=20261014-1"><link rel="stylesheet" href="./plan-generator.css?v=20261014-1"></head>
 <body><div class="shell">
 <header class="top"><a class="brand" href="./">LEMON / LEARNING</a><nav class="resources" aria-label="教学资料"><a href="./overview/">学习总览</a><a href="./overview/#subjects">学科教材</a><a href="./tutoring/">家教手册</a><a href="./conversation/">沟通观察</a><a href="./guide/">教学指南</a><a href="./lemon/">给 Lemon</a></nav></header>
 <div class="title"><div><span class="eyebrow">本轮主线 · 任务完成能力与信心</span><h1>合理估计，自己完成，看见进步。</h1><p class="lead">先认清一项任务有多大，再约定这次做多少、用多久。学霸、书写和英语是载体，进步不等于不断加量。</p></div><div class="date field"><label for="sessionDate">学习日期</label><input id="sessionDate" type="date" required></div></div>
@@ -39,12 +39,18 @@
 <div class="section-head"><span class="index">02</span><h2 id="planHeading">约定这次做多少、用多久、怎样算完成</h2></div>
 <div class="grid3"><div class="field"><label for="sessionTotal">本次共学总时长</label><select id="sessionTotal"><option value="60">60分钟</option><option value="75">75分钟</option><option value="90">90分钟</option></select></div><div class="field"><label for="overhead">计划、收尾与约定休息</label><input id="overhead" type="number" min="0" max="90" step="1" value="18"><small>预留，不挤占任务或教学时间。</small></div><div class="field"><label for="owner">本次辅导人</label><select id="owner"><option>家教</option><option>家长</option></select></div></div>
 <div class="budget" id="budget" aria-live="polite">先选任务并确认本次预算。</div>
+<section class="planner-box" id="planGenerator" aria-labelledby="generatorHeading">
+<div class="planner-head"><div><h3 id="generatorHeading">生成本次建议</h3><p class="note">读取实际任务、同条件实测和当天课程。先给草案，不自动新增约定或改写记录。</p></div><button class="btn" id="generatePlan" type="button">生成本次建议</button></div>
+<p id="generatorHint" class="note">首次使用：把下方任务加入候选，用时可留空。每日例行内容未核实时会显示待确认。</p>
+<div id="generatorCandidates"></div><div id="generatedPlan"></div><div id="adoptedGaps" class="note" aria-live="polite"></div>
+</section>
 <form id="taskForm">
 <div class="grid"><div class="field"><label for="taskName">具体材料与范围</label><input id="taskName" required maxlength="160" placeholder="例如：数学《学霸》P26–27"><small>写明页码、文字来源或当天练习包。</small></div><div class="field"><label for="necessity">为什么这次要做</label><select id="necessity" required><option value="">先确认本次必要性</option><option value="required">实际必交任务</option><option value="important">已发现的薄弱点 / 有明确目标</option><option value="routine">例行课程练习</option><option value="optional">可顺延的巩固 / 训练</option></select></div></div>
 <div class="grid3" style="margin-top:14px"><div class="field"><label for="quantity">本次任务量 <span id="unitLabel"></span></label><input id="quantity" type="number" min="0.1" step="0.1" required></div><div class="field"><label for="familiarity">当前熟悉程度</label><select id="familiarity"><option value="familiar">已学的常规任务</option><option value="hard">已学但难度较高</option><option value="learning">尚不会，需要先教</option></select></div><div class="field"><label for="taskMinutes">任务约定用时（分钟）</label><input id="taskMinutes" type="number" min="1" max="180" step="1" required placeholder="参考实测后填写"></div></div>
 <div class="grid" style="margin-top:14px"><div class="field"><label for="teachingMinutes">另留教学时间（分钟）</label><input id="teachingMinutes" type="number" min="0" max="120" step="1" value="0" required></div><div class="field"><label for="qualityRule">做到哪里、质量怎样算够</label><input id="qualityRule" required maxlength="180" placeholder="例如：字迹可辨、不漏抄，只抓口的笔顺"></div></div>
 <details><summary>比较条件与截止要求</summary><div class="grid"><div class="field"><label for="comparisonGroup">可比较的任务组</label><input id="comparisonGroup" maxlength="120"><small>同材料类型、密度与质量要求才比较；任务组改变则建立新基线。</small></div><div class="field"><label for="deadline">实际截止日期（未确认留空）</label><input id="deadline" type="date"></div></div></details>
-<div class="actions"><button class="btn" type="submit" id="addRecord">加入本次约定</button><span class="note">加入的是已有学习任务，不是额外的一套训练。</span></div>
+<div class="actions"><button class="btn" type="button" id="stageCandidate">加入候选，再生成建议</button><button class="btn secondary" type="submit" id="addRecord">按填写值直接约定</button><span class="note">加入的是已有学习任务，不是额外的一套训练。</span></div>
+<label class="check"><input type="checkbox" id="plannerSplit"><span>必要时允许先做小段（剩余任务另排，不算全部完成）</span></label>
 </form>
 <div id="planList" style="margin-top:15px"></div>
 <details id="legacyPool"><summary>带入已有任务池、每日练习与课程作业</summary><p>旧任务的“预计分钟”只作旧预算，不冒充实测，也不自动认定已完成。填入本次范围、教学和完成标准后才加入约定。</p><div id="poolCandidates"></div></details>
@@ -67,4 +73,4 @@
 <details><summary>记录备份与跨设备交接</summary><p>页面没有云端数据库。记录只在当前设备、浏览器和域名；家教与家长通过复制记录交接，换域名前先导出。旧任务池和教材草稿仍保留，不会自动变成实测。</p><div class="actions"><button type="button" class="btn secondary" id="exportData">导出本地备份</button><label class="btn secondary" for="importData">导入备份</label><input id="importData" class="no-print" type="file" accept=".json,application/json" hidden></div></details>
 </section>
 </main><footer class="footer">Lemon · 本轮任务标尺 v0.1 / 2026-10-14。参考是暂定预算，实测才是个体证据。不生成“自觉性总分”。</footer></div><div id="status" class="toast" role="status" aria-live="polite" hidden></div>
-<script src="./task-ruler.js?v=20261014-1"></script><script src="./learning-background.js?v=20261014-1"></script><script src="./learning-guide.js" defer></script></body></html>
+<script src="./plan-engine.js?v=20261014-1"></script><script src="./task-ruler.js?v=20261014-2"></script><script src="./plan-generator.js?v=20261014-1"></script><script src="./learning-background.js?v=20261014-1"></script><script src="./learning-guide.js" defer></script></body></html>
