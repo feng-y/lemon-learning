@@ -28,10 +28,10 @@ h1{font-size:31px;letter-spacing:-.035em;margin:7px 0 10px;line-height:1.25}
 .progress{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:15px 0 20px}
 .progress div{padding:12px 15px;background:#fff;border:1px solid var(--line);border-radius:11px;display:flex;align-items:center;gap:9px;font-size:12px;color:#62766c}
 .progress strong{background:var(--soft);color:var(--green);border-radius:50%;width:23px;height:23px;display:grid;place-items:center;font-size:11px}
-.dashboard{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);grid-template-areas:"tasks guidance" "tasks agree" "study review" "support resources";align-items:start;gap:16px}
-#tasks{grid-area:tasks}#curriculumGuide{grid-area:guidance}#agree{grid-area:agree}#study{grid-area:study}#review{grid-area:review}#support{grid-area:support}#resources{grid-area:resources}
+.dashboard{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);grid-template-areas:"tasks tasks" "agree study" "review review" "support resources";align-items:start;gap:16px}
+#tasks{grid-area:tasks}#agree{grid-area:agree}#study{grid-area:study}#review{grid-area:review}#support{grid-area:support}#resources{grid-area:resources}
 .dashboard > section{min-width:0;scroll-margin-top:94px}
-.guide-box{margin:0}.dashboard .guide-grid{grid-template-columns:1fr}
+.step-one-columns{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}.step-one-columns>div{min-width:0}.step-one-course .school-day{margin-bottom:14px}.step-one-taskpool>.section-name:first-of-type{margin-top:2px}.plan-subtitle{font-size:14px;font-weight:800;margin:2px 0 12px;color:#385843}.guide-box{margin:0;background:#f8fcf9;padding:15px;border:1px solid #d4e6da;border-radius:12px}.step-one-course .guide-grid{grid-template-columns:1fr}.step-one-taskpool details{margin-top:12px}.step-one-taskpool .section-name{margin-top:14px}
 .dashboard #support{background:#f8faf7}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;min-width:0}
 .cardhead{display:flex;gap:11px;align-items:flex-start;margin-bottom:17px}
@@ -114,9 +114,9 @@ details p,details li{font-size:12px;color:var(--muted)}
 .footer{font-size:11px;color:#87968a;margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
 #status{font-size:12px;color:var(--green);min-height:17px;font-weight:750}
 @media(max-width:880px){
- .dashboard{grid-template-columns:minmax(0,1fr);grid-template-areas:"tasks" "guidance" "agree" "study" "review" "support" "resources"}
+ .dashboard{grid-template-columns:minmax(0,1fr);grid-template-areas:"tasks" "agree" "study" "review" "support" "resources"}
  .sitebar{margin:0 -14px 16px;padding:11px 14px;flex-wrap:wrap;gap:5px}
- .sitebrand{width:100%}.site-nav{width:100%;gap:2px}.dashboard > section{scroll-margin-top:118px}.hero{align-items:start}.wrap{padding:15px 14px 50px}
+ .sitebrand{width:100%}.site-nav{width:100%;gap:2px}.step-one-columns{grid-template-columns:1fr;gap:16px}.dashboard > section{scroll-margin-top:118px}.hero{align-items:start}.wrap{padding:15px 14px 50px}
 }
 @media(max-width:590px){.hero{padding:22px;display:block}.hero-stat{margin-top:17px;min-width:0}.hero h1{font-size:29px}.progress{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.progress div{padding:9px}.card{padding:17px}.days{gap:3px}.formgrid{grid-template-columns:1fr}.wide{grid-column:auto}.cycle{grid-template-columns:repeat(2,minmax(0,1fr))}.phase{grid-template-columns:80px 1fr}}
 @media print{body{background:white}.wrap{padding:0}.sitebar{position:static;border:none}.site-nav{display:none}.hero{background:#fff;color:var(--ink);border:1px solid #ddd}.hero p,.eyebrow{color:var(--text)}.hero-stat{background:#fff;border:1px solid #ddd}.hero-stat b,.hero-stat span{color:var(--ink)}.dashboard{display:block}.card{break-inside:avoid;margin-bottom:10px}.pool-actions,.no-print,.preset,nav button{display:none!important}}
@@ -127,8 +127,7 @@ details p,details li{font-size:12px;color:var(--muted)}
 <header class="sitebar">
 <a class="sitebrand" href="./">LEMON / LEARNING</a>
 <nav class="site-nav" aria-label="Lemon Learning 主导航">
-<a class="current" href="#tasks">今日任务</a>
-<a href="#curriculumGuide">学习与预习</a>
+<a class="current" href="#tasks">学习安排（任务·预习）</a>
 <a href="#agree">共同约定</a>
 <a href="#study">共学执行</a>
 <a href="#review">完成反馈</a>
@@ -144,12 +143,14 @@ details p,details li{font-size:12px;color:var(--muted)}
 <div><div class="eyebrow">LEMON · DAILY LEARNING</div><h1>今天，和 Lemon 一起学。</h1><p>从今天的课表与任务出发，确定学习和预习重点，再一起约定、互动学习、完成反馈。<b>成人负责安排与支持，Lemon 逐渐承担自主责任。</b></p></div>
 <div class="hero-stat"><span>今日安排</span><b id="heroDate">—</b><span id="heroCount">等待选择任务</span></div>
 </header>
-<div class="progress"><div><strong>1</strong>确定任务与学习重点</div><div><strong>2</strong>共同约定</div><div><strong>3</strong>互动共学</div><div><strong>4</strong>完成与反馈</div></div>
+<div class="progress"><div><strong>1</strong>学习安排（任务与预习）</div><div><strong>2</strong>共同约定</div><div><strong>3</strong>互动共学</div><div><strong>4</strong>完成与反馈</div></div>
 <main class="dashboard">
 <section class="card" id="tasks">
-<div class="cardhead"><span class="step">1</span><div><h2>从每周任务池，安排今天</h2><p class="sub">成人先判断哪些必须完成，哪些可以调整。Lemon 参与选择顺序，但不独自承担全部规划。</p></div></div>
+<div class="cardhead"><span class="step">1</span><div><h2>确定今天的学习安排</h2><p class="sub">先看校内与课外课程，明确今天学什么、下一课预习什么，再从任务池选择实际要完成的作业。它们都是同一阶段，不另起一套计划。</p></div></div>
 <div class="weekbar"><button type="button" id="prevWeek" class="smallbtn out" aria-label="上一周">← 上周</button><strong id="weekLabel"></strong><button type="button" id="nextWeek" class="smallbtn out" aria-label="下一周">下周 →</button></div>
 <div class="days" id="days"></div>
+<div class="step-one-columns">
+<div class="step-one-course"><h3 class="plan-subtitle">课程与学习建议</h3>
 <div class="school-day" aria-label="当前所选日期的学校课表">
  <div class="school-head"><strong id="schoolDayTitle">当天课表</strong><small>用于核对作业，不自动增加练习</small></div>
  <ol class="lessons" id="schoolLessons"></ol>
@@ -160,6 +161,26 @@ details p,details li{font-size:12px;color:var(--muted)}
   <p class="class-busy-note">上课占用独立时间，不计入这里的家庭共学时段；当日任务量应考虑已有课程与精力。</p>
  </div>
 </div>
+<div class="guide-box" id="curriculumGuide" aria-label="按日期与教材进度生成的学习建议">
+ <div class="guide-head"><strong>学什么 · 预习什么</strong><span>随所选日期和实际教材进度调整</span></div>
+ <div class="guide-grid">
+  <div class="guide-panel"><h3>今天的学习重点</h3><p class="guide-when" id="guideTodayDate"></p><div id="guideToday"></div></div>
+  <div class="guide-panel"><h3>下一上课日的轻预习</h3><p class="guide-when" id="guidePreviewDate"></p><div id="guidePreview"></div></div>
+ </div>
+ <p class="school-note" id="guideScope"></p>
+ <details><summary>展开未来七天建议</summary><div id="guideWeek" style="margin-top:10px"></div></details>
+ <details><summary>同步教材进度（学到哪课 / 下一课）</summary>
+  <p class="school-note">学科当前进度没有确凿记录时保持“待同步”，不按日期假定已学会某一章。这里可以先临时录入，后续通过“复制进度摘要”发送给我更新仓库。</p>
+  <p class="school-note" id="guideOrigin"></p>
+  <datalist id="guideMathUnits"><option value="认识更大的数"><option value="线与角"><option value="整数乘法（二）"><option value="我们生活的空间（二）"><option value="运算律"><option value="图形的奥秘"><option value="运用数量关系解决问题"><option value="数据的表示和分析（一）"></datalist>
+  <div id="guideProgressForm"></div>
+  <div class="btns"><button type="button" class="secondary" id="guideCopyProgress">复制进度摘要</button><button type="button" class="smallbtn out" id="guideResetProgress">恢复仓库进度</button></div>
+  <p class="school-note">本机录入不会自动跨设备同步；你在对话中发作业、教师反馈或进度后，我可以将确证结果更新到仓库进度文件。</p>
+ </details>
+ <p id="guideStatus" class="school-note" role="status" aria-live="polite"></p>
+</div>
+</div>
+<div class="step-one-taskpool"><h3 class="plan-subtitle">今天要完成的任务</h3>
 <div class="section-name"><strong>每日例行</strong><span>新东方 · 计入时间预算，不占主任务名额</span></div>
 <div id="dailyList"></div>
 <div class="section-name"><strong>当天必要 / 临近任务</strong><span>优先处理有期限的事</span></div>
@@ -180,24 +201,8 @@ details p,details li{font-size:12px;color:var(--muted)}
 </div><div class="btns"><button id="addWriting" type="button" class="secondary">加入今天可选训练</button></div>
 <p>中文逐步从50字走向500字；英文从短行、短段逐渐增加。不是每天额外抄500字，也不是因为做得快临时加量。</p></div>
 </details>
-</section>
-<section class="card guide-box" id="curriculumGuide" aria-label="按日期与教材进度生成的学习建议">
- <div class="guide-head"><strong>学什么 · 预习什么</strong><span>随所选日期和实际教材进度调整</span></div>
- <div class="guide-grid">
-  <div class="guide-panel"><h3>今天的学习重点</h3><p class="guide-when" id="guideTodayDate"></p><div id="guideToday"></div></div>
-  <div class="guide-panel"><h3>下一上课日的轻预习</h3><p class="guide-when" id="guidePreviewDate"></p><div id="guidePreview"></div></div>
- </div>
- <p class="school-note" id="guideScope"></p>
- <details><summary>展开未来七天建议</summary><div id="guideWeek" style="margin-top:10px"></div></details>
- <details><summary>同步教材进度（学到哪课 / 下一课）</summary>
-  <p class="school-note">学科当前进度没有确凿记录时保持“待同步”，不按日期假定已学会某一章。这里可以先临时录入，后续通过“复制进度摘要”发送给我更新仓库。</p>
-  <p class="school-note" id="guideOrigin"></p>
-  <datalist id="guideMathUnits"><option value="认识更大的数"><option value="线与角"><option value="整数乘法（二）"><option value="我们生活的空间（二）"><option value="运算律"><option value="图形的奥秘"><option value="运用数量关系解决问题"><option value="数据的表示和分析（一）"></datalist>
-  <div id="guideProgressForm"></div>
-  <div class="btns"><button type="button" class="secondary" id="guideCopyProgress">复制进度摘要</button><button type="button" class="smallbtn out" id="guideResetProgress">恢复仓库进度</button></div>
-  <p class="school-note">本机录入不会自动跨设备同步；你在对话中发作业、教师反馈或进度后，我可以将确证结果更新到仓库进度文件。</p>
- </details>
- <p id="guideStatus" class="school-note" role="status" aria-live="polite"></p>
+</div>
+</div>
 </section>
 <section class="card" id="agree">
 <div class="cardhead"><span class="step">2</span><div><h2>今天我们怎么约定</h2><p class="sub">成人决定任务边界，Lemon 选择先做什么、自己负责什么，以及希望获得的奖励。</p></div></div>
