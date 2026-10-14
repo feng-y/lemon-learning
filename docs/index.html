@@ -34,6 +34,13 @@ h2{color:var(--ink);font-size:20px;letter-spacing:-.025em;margin:0}h3{color:var(
 .days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin-bottom:13px}
 .day{border-radius:9px;border:1px solid #e2e8e2;background:#fafbf9;padding:8px 2px;text-align:center;color:#69786f;min-width:0;font-weight:600}
 .day span{display:block;font-size:11px}.day b{display:block;font-size:15px;color:#3b5247}.day.active{background:var(--soft);border-color:#76a995;box-shadow:inset 0 0 0 1px #76a995}.day.today b{color:var(--green)}
+.school-day{background:#f8faf8;border:1px solid #e0eae3;border-radius:11px;padding:11px 13px}
+.school-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:5px;margin-bottom:9px}
+.school-head strong{color:var(--ink);font-size:13px}.school-head small{color:var(--muted);font-size:11px}
+.lessons{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;list-style:none;margin:0;padding:0}
+.lessons li{border:1px solid #e4ebe5;background:white;border-radius:7px;display:flex;align-items:center;gap:8px;padding:7px 9px;min-width:0;color:#344a3f;font-size:12px}
+.lesson-no{color:#8a998f;font-size:10px;white-space:nowrap}.school-note{font-size:11px;color:#78877e;margin:7px 0 0}
+@media(max-width:590px){.lessons{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .section-name{display:flex;justify-content:space-between;gap:8px;align-items:baseline;margin:16px 0 8px}
 .section-name strong{color:var(--ink);font-size:13px}.section-name span{font-size:11px;color:var(--muted)}
 .pool-task{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:11px 12px;border:1px solid #e5ebe5;background:#fff;border-radius:10px;margin-bottom:7px}
@@ -91,6 +98,11 @@ details p,details li{font-size:12px;color:var(--muted)}
 <div class="cardhead"><span class="step">1</span><div><h2>从每周任务池，安排今天</h2><p class="sub">成人先判断哪些必须完成，哪些可以调整。Lemon 参与选择顺序，但不独自承担全部规划。</p></div></div>
 <div class="weekbar"><button type="button" id="prevWeek" class="smallbtn out" aria-label="上一周">← 上周</button><strong id="weekLabel"></strong><button type="button" id="nextWeek" class="smallbtn out" aria-label="下一周">下周 →</button></div>
 <div class="days" id="days"></div>
+<div class="school-day" aria-label="当前所选日期的学校课表">
+ <div class="school-head"><strong id="schoolDayTitle">当天课表</strong><small>用于核对作业，不自动增加练习</small></div>
+ <ol class="lessons" id="schoolLessons"></ol>
+ <p class="school-note" id="schoolNote"></p>
+</div>
 <div class="section-name"><strong>每日例行</strong><span>新东方 · 计入时间预算，不占主任务名额</span></div>
 <div id="dailyList"></div>
 <div class="section-name"><strong>当天必要 / 临近任务</strong><span>优先处理有期限的事</span></div>
@@ -187,6 +199,14 @@ details p,details li{font-size:12px;color:var(--muted)}
 const $=id=>document.getElementById(id);
 const poolKey='lemon-weekly-pool-v1',planKey='lemon-integrated-plan-v1';
 const weekdays=['周一','周二','周三','周四','周五','周六','周日'];
+// 2026 秋 · 四年级14班连玉玲课表。仅是上课事实，不能据此推断有作业。
+const schoolTimetable=[
+ ['语文','数学','英语','少先队活动','体育','美术'],
+ ['数学','语文','音乐','体育素质','美术','科学'],
+ ['数学','语文','道德与法治','体育','劳动','书法'],
+ ['语文','数学','音乐','道德与法治','体育','英语'],
+ ['语文','综合实践','信息','英语','趣味体育','科学']
+];
 const labels={school:'课内必做',extra:'课外巩固',course:'课程作业',writing:'书写训练'};
 const fixed=[
  {id:'course-pu3-wed',name:'有道 Power Up 3 · 周三作业',type:'course',days:[2],minutes:20,goal:'根据当次作业要求共同确认完成范围',note:'周三课程作业，完成期限以教师实际要求为准'},
@@ -255,6 +275,12 @@ function bindPoolButtons(root){
   save();render();
  }));
 }
+function renderSchoolDay(){
+ const lessons=schoolTimetable[day]||[];
+ $('schoolDayTitle').textContent=weekdays[day]+' · '+(lessons.length?'校内6节课':'无校内课表');
+ $('schoolLessons').innerHTML=lessons.map((subject,i)=>'<li><span class="lesson-no">第'+(i+1)+'节</span><span>'+esc(subject)+'</span></li>').join('');
+ $('schoolNote').textContent=lessons.length?'先核对老师实际布置的作业，再决定今天加入哪些任务；上课≠新增作业。':'周末无校内课程安排；学校遗留作业与课外课程仍按实际任务池处理。';
+}
 function renderWeek(){
  $('weekLabel').textContent=dayString(week)+' ～ '+dayString(plusDays(week,6));
  $('heroDate').textContent=(plusDays(week,day).getMonth()+1)+'月'+plusDays(week,day).getDate()+'日';
@@ -264,6 +290,7 @@ function renderWeek(){
   return '<button class="day'+(i===day?' active':'')+(dayString(d)===dayString(now)?' today':'')+'" data-day="'+i+'" type="button"><span>'+label+'</span><b>'+d.getDate()+'</b></button>';
  }).join('');
  $('days').querySelectorAll('[data-day]').forEach(b=>b.addEventListener('click',()=>{day=Number(b.dataset.day);render()}));
+ renderSchoolDay();
 }
 function renderTasks(){
  const list=tasks().filter(t=>!t.daily&&(t.days?true:t.date===dateKey()));
