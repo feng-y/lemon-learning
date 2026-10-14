@@ -1,0 +1,12 @@
+/* Scoped to the proposal; existing background, ruler and evidence forms are unchanged. */
+.planner-box{border:1px solid #bed3c4;border-radius:10px;background:#f7fbf7;padding:18px;margin:17px 0;scroll-margin-top:85px}
+.planner-head{display:flex;align-items:center;justify-content:space-between;gap:18px}.planner-head .btn{white-space:nowrap}.planner-head h3{margin:0}.planner-head p{margin:4px 0}
+.gp-summary{padding:13px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:13px 0}.gp-summary p{font-size:13px}
+.gp-candidate{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}
+.gp-task{padding:16px;background:#fff;border:1px solid var(--line);border-radius:9px;margin:12px 0}
+.gp-task-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.gp-task-head .check{margin:0;font-size:15px}.gp-task .grid{margin:13px 0 8px}
+.gp-basis{font-size:12px;color:#486950;padding:8px 0;margin:0;border-bottom:1px solid var(--line)}
+.gp-gap{display:flex;gap:13px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:11px 0;font-size:13px}.gp-gap p{margin:3px 0}.gp-gap .btn{white-space:nowrap}
+.gp-timeline>div{display:grid;grid-template-columns:90px 1fr;gap:13px;padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}.gp-timeline span{color:var(--muted)}.gp-timeline b{font-weight:600}
+@media(max-width:600px){.planner-box{padding:13px}.planner-head{align-items:flex-start;flex-direction:column;gap:10px}.gp-task{padding:12px}.gp-task-head,.gp-gap{flex-wrap:wrap}.gp-timeline>div{grid-template-columns:70px 1fr}.gp-candidate{align-items:flex-start}.gp-task .grid{grid-template-columns:1fr 1fr}}
+@media print{.planner-box{display:none}}
