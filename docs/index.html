@@ -338,7 +338,7 @@ const fixed=[
  {id:'xdf-reader',name:'新东方 · 每日小书童训练',type:'course',daily:true,days:[0,1,2,3,4,5,6],minutes:8,goal:'按实际内容引导后独立尝试',note:'每日例行，时长为可调整的估计'},
  {id:'xdf-vocab',name:'新东方 · 每日单词训练',type:'course',daily:true,days:[0,1,2,3,4,5,6],minutes:8,goal:'听/读/理解，再尝试提取与使用',note:'每日例行，时长为可调整的估计'}
 ];
-const defaults={duration:90,first:'',commitment:'先说说自己的想法，再独立试一小步',reward:'听故事20分钟',otherReward:'',childConfirmed:false,adultConfirmed:false,promiseDone:false,win:'',adultHelp:'',leftover:'',blocks: {}};
+const defaults={dayGoal:'',dayVerify:'',duration:90,first:'',commitment:'先说说自己的想法，再独立试一小步',reward:'听故事20分钟',otherReward:'',childConfirmed:false,adultConfirmed:false,promiseDone:false,win:'',adultHelp:'',leftover:'',blocks: {}};
 const presets={
  'math-school':{name:'数学课内作业',type:'school',goal:'先理题意，再尝试独立完成'},
  'zh-school':{name:'语文课内作业',type:'school',goal:'确认任务要求，完成后一起交流'},
@@ -430,6 +430,13 @@ function renderTasks(){
  $('otherList').innerHTML=others.length?others.map(fmtTask).join(''):'<p class="info">暂无其他周期任务。</p>';
  ['dailyList','dueList','otherList'].forEach(id=>bindPoolButtons($(id)));
 }
+function updateGoalSummaries(){
+ const d=draft(),goal=(d.dayGoal||'').trim()||'今日目标尚未确认',verify=(d.dayVerify||'').trim();
+ $('goalPlanSummary').textContent=goal;
+ $('goalExecuteSummary').textContent=goal;
+ $('verifyPlanSummary').textContent=verify?'验收标准：'+verify:'验收标准待确认';
+ $('verifyExecuteSummary').textContent=verify?'验收标准：'+verify:'验收标准待确认';
+}
 function renderChoices(){
  let d=draft(), all=selectedTasks().concat(dailyTasks());
  let oldFirst=d.first;
@@ -438,6 +445,9 @@ function renderChoices(){
  $('firstTask').innerHTML=html;
  $('firstTask').value=d.first;
  $('duration').value=String(d.duration||90);
+ $('dayGoal').value=d.dayGoal||'';
+ $('dayVerify').value=d.dayVerify||'';
+ updateGoalSummaries();
  $('commitment').value=d.commitment;
  $('reward').value=d.reward;
  $('otherReward').value=d.otherReward||'';
@@ -512,6 +522,7 @@ function copyText(){
  const choice=d.reward==='other'?(d.otherReward||'待确认'):d.reward;
  const lines=[
   'Lemon｜'+date+' 共学约定（'+duration()+'分钟）',
+  '【今日目标】'+(d.dayGoal||'尚未确认')+'；验收标准：'+(d.dayVerify||'尚未确认'),
   '【当天固定课外课程（单独占用时间）】',
   ...((extraClassSchedule[day]||[]).map(c=>c.period+' · '+c.subject).length?(extraClassSchedule[day]||[]).map(c=>c.period+' · '+c.subject):['无']),
   '【任务池选出】',
@@ -558,16 +569,48 @@ $('addWriting').addEventListener('click',()=>{
 });
 $('duration').addEventListener('change',e=>{draft().duration=Number(e.target.value);render()});
 $('firstTask').addEventListener('change',e=>{draft().first=e.target.value;draft().blocks.block1=e.target.value;render()});
-['commitment','reward','otherReward','childConfirmed','adultConfirmed','promiseDone','win','adultHelp','leftover'].forEach(id=>{
+['dayGoal','dayVerify','commitment','reward','otherReward','childConfirmed','adultConfirmed','promiseDone','win','adultHelp','leftover'].forEach(id=>{
  const e=$(id);e.addEventListener(['childConfirmed','adultConfirmed','promiseDone','commitment','reward'].includes(id)?'change':'input',()=>{
   draft()[id]=e.type==='checkbox'?e.checked:e.value;
   if(id==='reward')$('otherRewardField').hidden=e.value!=='other';
   save();
+  if(id==='dayGoal'||id==='dayVerify')updateGoalSummaries();
   if(id==='reward'||id==='otherReward'||id==='promiseDone')renderDone();
  });
 });
 $('copy').addEventListener('click',copyText);
 $('print').addEventListener('click',()=>window.print());
+const stageIds=['goal','plan','execute'];
+function showStage(name,{scroll=false}={}){
+ const selected=stageIds.includes(name)?name:'goal';
+ stageIds.forEach(id=>{
+  const panel=$('stage-'+id),tab=$('tab-'+id);
+  panel.hidden=id!==selected;
+  tab.setAttribute('aria-selected',String(id===selected));
+  tab.tabIndex=id===selected?0:-1;
+ });
+ if(scroll){
+  const el=document.querySelector('.workflow-tabs');
+  if(el&&typeof el.scrollIntoView==='function')el.scrollIntoView({behavior:'smooth',block:'start'});
+ }
+ if(window.history?.replaceState)window.history.replaceState(null,'','#stage-'+selected);
+}
+document.querySelectorAll('.workflow-tab').forEach(tab=>{
+ tab.addEventListener('click',()=>showStage(tab.dataset.stage,{scroll:false}));
+ tab.addEventListener('keydown',e=>{
+  if(!['ArrowRight','ArrowLeft'].includes(e.key))return;
+  e.preventDefault();const idx=stageIds.indexOf(tab.dataset.stage);
+  const next=stageIds[(idx+(e.key==='ArrowRight'?1:2))%3];
+  showStage(next);$('tab-'+next).focus();
+ });
+});
+document.querySelectorAll('[data-go-stage]').forEach(btn=>btn.addEventListener('click',()=>showStage(btn.dataset.goStage,{scroll:true})));
+window.addEventListener('hashchange',()=>{
+ const hash=(window.location?.hash||'').slice(1);
+ if(hash.startsWith('stage-'))showStage(hash.slice(6));
+});
+const initialHash=(window.location?.hash||'').slice(1);
+showStage(initialHash.startsWith('stage-')?initialHash.slice(6):'goal');
 renderWriting();render();
 })();
 </script>
