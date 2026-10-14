@@ -12,19 +12,27 @@
 body{margin:0;background:var(--bg);color:var(--text);font:14px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
 a{color:var(--green)}button,input,select,textarea{font:inherit}button{cursor:pointer}
 .wrap{max-width:1190px;margin:auto;padding:18px 24px 70px}
-nav{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:3px 0 20px}
-nav b{font-size:14px;color:var(--ink);letter-spacing:.04em}nav a{font-size:12px;text-decoration:none;color:#577264}
-.hero{background:#1e4638;color:#fff;border-radius:18px;padding:31px 34px;display:flex;justify-content:space-between;align-items:flex-end;gap:22px}
+.sitebar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:24px;margin:0 -24px 17px;padding:12px 24px;background:rgba(244,246,243,.97);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+.sitebrand{flex-shrink:0;color:var(--ink);text-decoration:none;font-size:14px;font-weight:850;letter-spacing:.04em;white-space:nowrap}
+.site-nav{min-width:0;display:flex;align-items:center;gap:5px;overflow-x:auto;white-space:nowrap;scrollbar-width:thin}
+.site-nav a{color:#52695a;text-decoration:none;font-size:12px;font-weight:700;padding:7px 9px;border-radius:8px;white-space:nowrap;flex-shrink:0}
+.site-nav a:hover,.site-nav a:focus-visible{background:var(--soft);color:var(--green)}
+.site-nav a.current{background:var(--soft);color:var(--green)}
+.site-nav a.secondary-link{color:#748477}
+.hero{background:#1e4638;color:#fff;border-radius:17px;padding:24px 28px;display:flex;justify-content:space-between;align-items:center;gap:22px}
 .eyebrow{font-size:11px;color:#afcebd;font-weight:800;letter-spacing:.15em}
-h1{font-size:36px;letter-spacing:-.035em;margin:7px 0 11px;line-height:1.25}
+h1{font-size:31px;letter-spacing:-.035em;margin:7px 0 10px;line-height:1.25}
 .hero p{font-size:15px;line-height:1.8;color:#d4e6da;margin:0;max-width:720px}
 .hero-stat{min-width:188px;background:#ffffff16;border:1px solid #ffffff36;border-radius:13px;padding:14px}
 .hero-stat b{display:block;color:white;font-size:26px;line-height:1.3}.hero-stat span{display:block;font-size:12px;color:#cbded3}
 .progress{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:15px 0 20px}
 .progress div{padding:12px 15px;background:#fff;border:1px solid var(--line);border-radius:11px;display:flex;align-items:center;gap:9px;font-size:12px;color:#62766c}
 .progress strong{background:var(--soft);color:var(--green);border-radius:50%;width:23px;height:23px;display:grid;place-items:center;font-size:11px}
-.layout{display:grid;grid-template-columns:minmax(0,1.22fr) minmax(310px,.78fr);gap:17px;align-items:start}
-.stack{display:grid;gap:17px}
+.dashboard{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);grid-template-areas:"tasks guidance" "agree study" "review review" "support resources";align-items:start;gap:16px}
+#tasks{grid-area:tasks}#curriculumGuide{grid-area:guidance}#agree{grid-area:agree}#study{grid-area:study}#review{grid-area:review}#support{grid-area:support}#resources{grid-area:resources}
+.dashboard > section{min-width:0;scroll-margin-top:94px}
+.guide-box{margin:0}.dashboard .guide-grid{grid-template-columns:1fr}
+.dashboard #support{background:#f8faf7}
 .card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px;min-width:0}
 .cardhead{display:flex;gap:11px;align-items:flex-start;margin-bottom:17px}
 .step{min-width:28px;height:28px;border-radius:9px;background:var(--soft);color:var(--green);font-size:13px;font-weight:800;display:grid;place-items:center}
@@ -105,21 +113,39 @@ details{margin-top:14px;border-top:1px solid var(--line);padding-top:14px}summar
 details p,details li{font-size:12px;color:var(--muted)}
 .footer{font-size:11px;color:#87968a;margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
 #status{font-size:12px;color:var(--green);min-height:17px;font-weight:750}
-@media(max-width:880px){.layout{grid-template-columns:1fr}.hero{align-items:start}.wrap{padding:15px 14px 50px}}
+@media(max-width:880px){
+ .dashboard{grid-template-columns:minmax(0,1fr);grid-template-areas:"tasks" "guidance" "agree" "study" "review" "support" "resources"}
+ .sitebar{margin:0 -14px 16px;padding:11px 14px;flex-wrap:wrap;gap:5px}
+ .sitebrand{width:100%}.site-nav{width:100%;gap:2px}.hero{align-items:start}.wrap{padding:15px 14px 50px}
+}
 @media(max-width:590px){.hero{padding:22px;display:block}.hero-stat{margin-top:17px;min-width:0}.hero h1{font-size:29px}.progress{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.progress div{padding:9px}.card{padding:17px}.days{gap:3px}.formgrid{grid-template-columns:1fr}.wide{grid-column:auto}.cycle{grid-template-columns:repeat(2,minmax(0,1fr))}.phase{grid-template-columns:80px 1fr}}
-@media print{body{background:white}.wrap{padding:0}.hero{background:#fff;color:var(--ink);border:1px solid #ddd}.hero p,.eyebrow{color:var(--text)}.hero-stat{background:#fff;border:1px solid #ddd}.hero-stat b,.hero-stat span{color:var(--ink)}.layout{display:block}.card{break-inside:avoid;margin-bottom:10px}.pool-actions,.no-print,.preset,nav button{display:none!important}}
+@media print{body{background:white}.wrap{padding:0}.sitebar{position:static;border:none}.site-nav{display:none}.hero{background:#fff;color:var(--ink);border:1px solid #ddd}.hero p,.eyebrow{color:var(--text)}.hero-stat{background:#fff;border:1px solid #ddd}.hero-stat b,.hero-stat span{color:var(--ink)}.dashboard{display:block}.card{break-inside:avoid;margin-bottom:10px}.pool-actions,.no-print,.preset,nav button{display:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<nav><b>LEMON / LEARNING</b><a href="#resources">辅导方法与历史资料 ↓</a></nav>
+<header class="sitebar">
+<a class="sitebrand" href="./">LEMON / LEARNING</a>
+<nav class="site-nav" aria-label="Lemon Learning 主导航">
+<a class="current" href="#tasks">今日任务</a>
+<a href="#curriculumGuide">学习与预习</a>
+<a href="#agree">共同约定</a>
+<a href="#study">共学执行</a>
+<a href="#review">完成反馈</a>
+<a class="secondary-link" href="./overview/">学习总览</a>
+<a class="secondary-link" href="./overview/#subjects">学科教材</a>
+<a class="secondary-link" href="./tutoring/">家教手册</a>
+<a class="secondary-link" href="./conversation/">沟通观察</a>
+<a class="secondary-link" href="./guide/">教学指南</a>
+<a class="secondary-link" href="./lemon/">给 Lemon</a>
+</nav>
+</header>
 <header class="hero">
-<div><div class="eyebrow">LEMON · DAILY LEARNING</div><h1>今天，一起把学习做好。</h1><p>先看每周任务池，成人判断今天做什么；再和 Lemon 约定怎么学、什么时候结束；学习时一起讨论、练习、反馈，最后兑现约定。<b>这是一个完整的学习过程，不是几个互不相干的计划。</b></p></div>
+<div><div class="eyebrow">LEMON · DAILY LEARNING</div><h1>今天，和 Lemon 一起学。</h1><p>从今天的课表与任务出发，确定学习和预习重点，再一起约定、互动学习、完成反馈。<b>成人负责安排与支持，Lemon 逐渐承担自主责任。</b></p></div>
 <div class="hero-stat"><span>今日安排</span><b id="heroDate">—</b><span id="heroCount">等待选择任务</span></div>
 </header>
-<div class="progress"><div><strong>1</strong>明确今天的事</div><div><strong>2</strong>一起作出约定</div><div><strong>3</strong>互动学习</div><div><strong>4</strong>回顾并兑现</div></div>
-<main class="layout">
-<div class="stack">
+<div class="progress"><div><strong>1</strong>确定任务与学习重点</div><div><strong>2</strong>共同约定</div><div><strong>3</strong>互动共学</div><div><strong>4</strong>完成与反馈</div></div>
+<main class="dashboard">
 <section class="card" id="tasks">
 <div class="cardhead"><span class="step">1</span><div><h2>从每周任务池，安排今天</h2><p class="sub">成人先判断哪些必须完成，哪些可以调整。Lemon 参与选择顺序，但不独自承担全部规划。</p></div></div>
 <div class="weekbar"><button type="button" id="prevWeek" class="smallbtn out" aria-label="上一周">← 上周</button><strong id="weekLabel"></strong><button type="button" id="nextWeek" class="smallbtn out" aria-label="下一周">下周 →</button></div>
@@ -134,24 +160,6 @@ details p,details li{font-size:12px;color:var(--muted)}
   <p class="class-busy-note">上课占用独立时间，不计入这里的家庭共学时段；当日任务量应考虑已有课程与精力。</p>
  </div>
 </div>
-<section class="guide-box" id="curriculumGuide" aria-label="按日期与教材进度生成的学习建议">
- <div class="guide-head"><strong>学什么 · 预习什么</strong><span>随所选日期和实际教材进度调整</span></div>
- <div class="guide-grid">
-  <div class="guide-panel"><h3>今天的学习重点</h3><p class="guide-when" id="guideTodayDate"></p><div id="guideToday"></div></div>
-  <div class="guide-panel"><h3>下一上课日的轻预习</h3><p class="guide-when" id="guidePreviewDate"></p><div id="guidePreview"></div></div>
- </div>
- <p class="school-note" id="guideScope"></p>
- <details><summary>展开未来七天建议</summary><div id="guideWeek" style="margin-top:10px"></div></details>
- <details><summary>同步教材进度（学到哪课 / 下一课）</summary>
-  <p class="school-note">学科当前进度没有确凿记录时保持“待同步”，不按日期假定已学会某一章。这里可以先临时录入，后续通过“复制进度摘要”发送给我更新仓库。</p>
-  <p class="school-note" id="guideOrigin"></p>
-  <datalist id="guideMathUnits"><option value="认识更大的数"><option value="线与角"><option value="整数乘法（二）"><option value="我们生活的空间（二）"><option value="运算律"><option value="图形的奥秘"><option value="运用数量关系解决问题"><option value="数据的表示和分析（一）"></datalist>
-  <div id="guideProgressForm"></div>
-  <div class="btns"><button type="button" class="secondary" id="guideCopyProgress">复制进度摘要</button><button type="button" class="smallbtn out" id="guideResetProgress">恢复仓库进度</button></div>
-  <p class="school-note">本机录入不会自动跨设备同步；你在对话中发作业、教师反馈或进度后，我可以将确证结果更新到仓库进度文件。</p>
- </details>
- <p id="guideStatus" class="school-note" role="status" aria-live="polite"></p>
-</section>
 <div class="section-name"><strong>每日例行</strong><span>新东方 · 计入时间预算，不占主任务名额</span></div>
 <div id="dailyList"></div>
 <div class="section-name"><strong>当天必要 / 临近任务</strong><span>优先处理有期限的事</span></div>
@@ -173,27 +181,24 @@ details p,details li{font-size:12px;color:var(--muted)}
 <p>中文逐步从50字走向500字；英文从短行、短段逐渐增加。不是每天额外抄500字，也不是因为做得快临时加量。</p></div>
 </details>
 </section>
-<section class="card" id="study">
-<div class="cardhead"><span class="step">3</span><div><h2>按约定互动学习</h2><p class="sub">60～90分钟是总时段，包含讨论、示范、独立尝试、休息和回顾；不是一场闷头写作业的考试。</p></div></div>
-<div class="cycle"><div>交流想法</div><div>成人引导</div><div>短时尝试</div><div>一起反馈</div></div>
-<div class="schedule" id="schedule"></div>
-<div class="softbox"><b>家教和家长使用同一种方式</b><p>看见卡点，先听 Lemon 怎么想，必要时示范一步，再交回给他尝试。不替他答完整题，也不强制每做一题就来验收。连续练习从能胜任的几分钟开始，根据状态调整。</p></div>
+<section class="card guide-box" id="curriculumGuide" aria-label="按日期与教材进度生成的学习建议">
+ <div class="guide-head"><strong>学什么 · 预习什么</strong><span>随所选日期和实际教材进度调整</span></div>
+ <div class="guide-grid">
+  <div class="guide-panel"><h3>今天的学习重点</h3><p class="guide-when" id="guideTodayDate"></p><div id="guideToday"></div></div>
+  <div class="guide-panel"><h3>下一上课日的轻预习</h3><p class="guide-when" id="guidePreviewDate"></p><div id="guidePreview"></div></div>
+ </div>
+ <p class="school-note" id="guideScope"></p>
+ <details><summary>展开未来七天建议</summary><div id="guideWeek" style="margin-top:10px"></div></details>
+ <details><summary>同步教材进度（学到哪课 / 下一课）</summary>
+  <p class="school-note">学科当前进度没有确凿记录时保持“待同步”，不按日期假定已学会某一章。这里可以先临时录入，后续通过“复制进度摘要”发送给我更新仓库。</p>
+  <p class="school-note" id="guideOrigin"></p>
+  <datalist id="guideMathUnits"><option value="认识更大的数"><option value="线与角"><option value="整数乘法（二）"><option value="我们生活的空间（二）"><option value="运算律"><option value="图形的奥秘"><option value="运用数量关系解决问题"><option value="数据的表示和分析（一）"></datalist>
+  <div id="guideProgressForm"></div>
+  <div class="btns"><button type="button" class="secondary" id="guideCopyProgress">复制进度摘要</button><button type="button" class="smallbtn out" id="guideResetProgress">恢复仓库进度</button></div>
+  <p class="school-note">本机录入不会自动跨设备同步；你在对话中发作业、教师反馈或进度后，我可以将确证结果更新到仓库进度文件。</p>
+ </details>
+ <p id="guideStatus" class="school-note" role="status" aria-live="polite"></p>
 </section>
-<section class="card" id="review">
-<div class="cardhead"><span class="step">4</span><div><h2>结束：确认结果，兑现约定</h2><p class="sub">这里记录的是实际完成、独立尝试和有效帮助，而不是给 Lemon 的“态度”打分。</p></div></div>
-<div id="doneList"></div>
-<label class="checkbox"><input type="checkbox" id="promiseDone"><span>Lemon 做到了今天自己承担的那件事（认真尝试、合理求助也算）</span></label>
-<div class="formgrid" style="margin-top:12px">
-<div class="field wide"><label for="win">今天 Lemon 自己想明白或完成了什么</label><input id="win" placeholder="例如：自己说明了十位乘法的写法"></div>
-<div class="field"><label for="adultHelp">成人什么引导最有效</label><input id="adultHelp" placeholder="例如：先一起做一道示例"></div>
-<div class="field"><label for="leftover">未完成任务怎么处理</label><input id="leftover" placeholder="例如：明天另行安排剩余部分"></div>
-</div>
-<div id="rewardResult" class="softbox" aria-live="polite"></div>
-<div class="btns"><button class="primary" type="button" id="copy">复制本次学习记录</button><button class="secondary" type="button" id="print">打印 / 保存 PDF</button></div>
-<p class="info">修改后自动保存于本机浏览器。不同设备、不同域名之间暂不自动同步，可复制记录发给家教。</p>
-</section>
-</div>
-<div class="stack">
 <section class="card" id="agree">
 <div class="cardhead"><span class="step">2</span><div><h2>今天我们怎么约定</h2><p class="sub">成人决定任务边界，Lemon 选择先做什么、自己负责什么，以及希望获得的奖励。</p></div></div>
 <div class="field"><label for="duration">今天一起学多久（含休息）</label><select id="duration"><option value="60">60分钟</option><option value="75">75分钟</option><option value="90" selected>90分钟</option></select></div>
@@ -221,14 +226,35 @@ details p,details li{font-size:12px;color:var(--muted)}
 <label class="checkbox"><input type="checkbox" id="adultConfirmed"><span>成人认可任务量和奖励；不因为提前完成就继续加量</span></label>
 <div class="warn">已选任务若超出时间容量，应由成人减量或重新安排。学校必交的剩余任务另外说清楚，不能要求 Lemon 用无限延长的时间“负责”。</div>
 </section>
+<section class="card" id="study">
+<div class="cardhead"><span class="step">3</span><div><h2>按约定互动学习</h2><p class="sub">60～90分钟是总时段，包含讨论、示范、独立尝试、休息和回顾；不是一场闷头写作业的考试。</p></div></div>
+<div class="cycle"><div>交流想法</div><div>成人引导</div><div>短时尝试</div><div>一起反馈</div></div>
+<div class="schedule" id="schedule"></div>
+<div class="softbox"><b>家教和家长使用同一种方式</b><p>看见卡点，先听 Lemon 怎么想，必要时示范一步，再交回给他尝试。不替他答完整题，也不强制每做一题就来验收。连续练习从能胜任的几分钟开始，根据状态调整。</p></div>
+</section>
+<section class="card" id="review">
+<div class="cardhead"><span class="step">4</span><div><h2>结束：确认结果，兑现约定</h2><p class="sub">这里记录的是实际完成、独立尝试和有效帮助，而不是给 Lemon 的“态度”打分。</p></div></div>
+<div id="doneList"></div>
+<label class="checkbox"><input type="checkbox" id="promiseDone"><span>Lemon 做到了今天自己承担的那件事（认真尝试、合理求助也算）</span></label>
+<div class="formgrid" style="margin-top:12px">
+<div class="field wide"><label for="win">今天 Lemon 自己想明白或完成了什么</label><input id="win" placeholder="例如：自己说明了十位乘法的写法"></div>
+<div class="field"><label for="adultHelp">成人什么引导最有效</label><input id="adultHelp" placeholder="例如：先一起做一道示例"></div>
+<div class="field"><label for="leftover">未完成任务怎么处理</label><input id="leftover" placeholder="例如：明天另行安排剩余部分"></div>
+</div>
+<div id="rewardResult" class="softbox" aria-live="polite"></div>
+<div class="btns"><button class="primary" type="button" id="copy">复制本次学习记录</button><button class="secondary" type="button" id="print">打印 / 保存 PDF</button></div>
+<p class="info">修改后自动保存于本机浏览器。不同设备、不同域名之间暂不自动同步，可复制记录发给家教。</p>
+</section>
 <section class="card" id="support">
 <h3>当次辅导，只记住一个原则</h3>
 <p style="margin:0;color:#556e5e;font-size:15px"><b>成人搭支架，让 Lemon 真正完成自己的那一步；做到了就兑现结束与奖励。</b></p>
 <p class="role-note">成人不需要全程监考，也不等于完全放手。先陪他把困难说清楚、找到方法，再观察哪些步骤能够逐渐交还给他。</p>
 </section>
 <section class="card" id="resources">
-<h3>按需参考，不占用今天的操作路径</h3>
+<h3>学习体系与历史资料</h3>
+<p class="info"><a href="./overview/">原学习总览（含目标、当前重点、学科、系统与完整入口） →</a></p>
 <details><summary>打开既有的家教与学习资料</summary>
+<p><a href="./overview/#subjects">学科教材与长期目标</a> · 原学习体系总览</p>
 <p><a href="./tutoring/">家教 Playbook</a> · 如何互动、纠错和处理书写问题</p>
 <p><a href="./guide/">成人教学指南</a> · 学习中的支持与反馈</p>
 <p><a href="./conversation/">沟通与学习观察</a> · 常见情境和交流示例</p>
@@ -237,7 +263,6 @@ details p,details li{font-size:12px;color:var(--muted)}
 <p><a href="https://github.com/feng-y/lemon-learning/blob/main/active/CURRENT.md">仓库 CURRENT</a> · 当前事实与教学原则</p>
 </details>
 </section>
-</div>
 </main>
 <div id="status" role="status" aria-live="polite"></div>
 <footer class="footer">Lemon Learning · 一个学习过程：任务池 → 共同行动 → 互动学习 → 回顾兑现。本站为静态页面，学习记录仅保存在当前浏览器。</footer>
