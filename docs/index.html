@@ -154,6 +154,19 @@ details p,details li{font-size:12px;color:var(--muted)}
 #stage-execute #support{margin-top:15px}
 .resource-footer{margin-top:24px}.resource-footer .card{padding:16px 20px;background:#fafbf9}
 .resource-footer details{margin-top:7px;padding-top:9px}
+.planning-logic{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.planning-logic>div{padding:12px 14px;border:1px solid #dee8df;background:#f8faf8;border-radius:11px}
+.planning-logic b{display:block;color:#294f3a;font-size:13px}
+.planning-logic span{display:block;color:#77867b;font-size:11px;margin-top:3px}
+.priority-label{font-size:11px;color:#59745d;font-weight:750}
+.priority-select{display:inline-block;width:auto!important;max-width:130px;padding:4px 7px!important;font-size:11px!important;margin:4px 0}
+.alloc-input{width:66px!important;padding:5px 6px!important;font-size:12px!important;text-align:center}
+.plan-recommendation{margin-top:12px;border-top:1px solid #dfe7df;padding-top:11px;font-size:12px;line-height:1.7;color:#51685a}
+.plan-recommendation strong{color:#2d5841}
+.plan-recommendation .proposal{margin:4px 0;padding-left:16px;color:#5a6f62}
+.selected-task input[type=number]{vertical-align:middle}
+@media(max-width:590px){.planning-logic{grid-template-columns:1fr;gap:6px}.planning-logic>div{padding:9px 12px}.planning-logic span{display:inline;margin-left:10px}}
+
 @media(max-width:880px){.goal-layout,.plan-layout,.execution-layout{grid-template-columns:1fr}.workflow-tab{padding:12px 9px;gap:7px}.workflow-tabs{position:relative;top:auto}.journey-panel{scroll-margin-top:108px}}
 @media(max-width:590px){.workflow-tabs{gap:5px}.workflow-tab{display:block;min-height:82px;padding:9px 7px}.workflow-index{display:block;font-size:13px}.workflow-tab strong{font-size:13px}.workflow-tab small{font-size:10px;line-height:1.3}.goal-layout .guide-grid{grid-template-columns:1fr}.stage-actions{flex-wrap:wrap;justify-content:flex-end}.date-card{padding:14px}}
 @media print{.workflow-tabs{display:none}.journey-panel{display:block!important;break-before:auto}.session-flow{min-height:0}.goal-layout,.plan-layout,.execution-layout{display:block}.goal-layout>.card,.plan-layout>.card,.execution-layout>.card{margin:10px 0}.stage-actions{display:none}}
@@ -219,11 +232,16 @@ details p,details li{font-size:12px;color:var(--muted)}
 <section id="stage-plan" class="journey-panel" aria-labelledby="plan-heading">
 <header class="stage-heading"><span>阶段 2 / 3 · 正在规划</span><h2 id="plan-heading">制定规划</h2><p>把目标转成实际任务，控制任务量，与 Lemon 一起确定时间、顺序、自主责任和奖励。</p></header>
 <div class="goal-summary"><span>今天的目标</span><b id="goalPlanSummary">尚未确定，可以先核对任务</b><small id="verifyPlanSummary"></small></div>
+<div class="planning-logic" aria-label="今天做什么的优先级判断">
+ <div><b>P0 · 必须完成</b><span>真实必交、确认的截止要求</span></div>
+ <div><b>P1 · 值得投入</b><span>当前薄弱点、课前准备与必要例行</span></div>
+ <div><b>P2 · 可以调整</b><span>学霸额外题、书写梯次等</span></div>
+</div>
 <div class="plan-layout">
 <section class="card" id="tasks"><div class="cardhead"><div><h2>从任务池选择今天的事</h2><p class="sub">校内实际作业优先，PU2、PU3 与每日例行按真实负荷安排；选中的任务才进入今天计划。</p></div></div><div class="step-one-taskpool">
 <div class="section-name"><strong>每日例行</strong><span>新东方 · 计入时间预算，不占主任务名额</span></div>
 <div id="dailyList"></div>
-<div class="section-name"><strong>当天必要 / 临近任务</strong><span>优先处理有期限的事</span></div>
+<div class="section-name"><strong>当天必要 / 临近任务</strong><span>每项可设置P0 / P1 / P2，成人最终确认</span></div>
 <div id="dueList"></div>
 <details id="otherDetails"><summary>本周其他任务 · 可以提前安排</summary><div id="otherList" style="margin-top:10px"></div></details>
 <details><summary>补充实际作业或书写梯次</summary>
@@ -233,6 +251,13 @@ details p,details li{font-size:12px;color:var(--muted)}
 <div class="field wide"><label for="newTask">当天具体任务</label><input id="newTask" placeholder="例如：数学学霸 P26–27"></div>
 <div class="field"><label for="newKind">任务类型</label><select id="newKind"><option value="school">学校课内</option><option value="extra">课外巩固</option><option value="course">课程作业</option></select></div>
 <div class="field"><label for="newEstimate">预计时间（分钟）</label><input id="newEstimate" type="number" min="3" max="120" value="15"></div>
+<div class="field"><label for="newPriority">为什么今天要做</label><select id="newPriority">
+<option value="p0">P0 · 必须（有真实要求）</option>
+<option value="p1">P1 · 重要（针对性学习）</option>
+<option value="p2">P2 · 可调（拓展巩固）</option>
+</select></div>
+<div class="field"><label for="newDeadline">明确截止日期（没有可留空）</label><input id="newDeadline" type="date"></div>
+<div class="field"><label for="newWhy">安排理由</label><input id="newWhy" placeholder="例：老师要求明天提交 / 已发现算理错误"></div>
 <div class="field wide"><label for="newGoal">这次完成到哪里 / 需要怎样辅导</label><input id="newGoal" placeholder="先一起理题意，再让 Lemon 自己试"></div>
 </div><div class="btns"><button id="addTask" type="button" class="secondary">加入当天任务池</button></div>
 <div class="softbox"><h3>书写训练 · 只占用有余量的时间</h3><div class="formgrid">
@@ -248,9 +273,11 @@ details p,details li{font-size:12px;color:var(--muted)}
 <div class="softbox">
 <div class="row"><b>今日已选任务</b><span id="counter" class="right tag">0/3 主任务</span></div>
 <div id="selectedList"></div>
+<p class="info">这里可以修改每项分配分钟数，不改变实际课程时长；学习中仍按 Lemon 的状态调整。</p>
 <div class="row" style="margin-top:10px;justify-content:space-between"><small id="budgetText">可用时间</small><b id="usedText">0分钟</b></div>
 <div class="meter" id="meter"><i id="meterFill" style="width:0"></i></div>
 <p id="budgetNote">估计时间不是硬性考核。留出教学讨论与休息。</p>
+<div id="planRecommendation" class="plan-recommendation" aria-live="polite"></div>
 </div>
 <div class="formgrid">
 <div class="field wide"><label for="firstTask">Lemon 选择先做</label><select id="firstTask"></select></div>
@@ -350,6 +377,8 @@ const extraClassSchedule={
 };
 window.LemonSchedule={schoolTimetable,extraClassSchedule};
 const labels={school:'课内必做',extra:'课外巩固',course:'课程作业',writing:'书写训练'};
+const priorityLabels={p0:'P0 必须',p1:'P1 重要',p2:'P2 可调'};
+const priorityWeights={p0:0,p1:1,p2:2};
 const fixed=[
  {id:'course-pu3-wed',name:'有道 Power Up 3 · 周三作业',type:'course',days:[2],minutes:20,goal:'根据当次作业要求共同确认完成范围',note:'周三课程作业，完成期限以教师实际要求为准'},
  {id:'course-pu3-sat',name:'有道 Power Up 3 · 周六作业',type:'course',days:[5],minutes:20,goal:'根据当次作业要求共同确认完成范围',note:'周六课程作业，完成期限以教师实际要求为准'},
@@ -359,15 +388,15 @@ const fixed=[
 ];
 const defaults={dayGoal:'',dayVerify:'',goalAcceptance:'unverified',goalEvidence:'',duration:90,first:'',commitment:'先说说自己的想法，再独立试一小步',reward:'听故事20分钟',otherReward:'',childConfirmed:false,adultConfirmed:false,promiseDone:false,win:'',adultHelp:'',leftover:'',blocks: {}};
 const presets={
- 'math-school':{name:'数学课内作业',type:'school',goal:'先理题意，再尝试独立完成'},
- 'zh-school':{name:'语文课内作业',type:'school',goal:'确认任务要求，完成后一起交流'},
- 'en-school':{name:'英语课内作业',type:'school',goal:'结合听说读写要求，互动后尝试'},
- 'xueba':{name:'数学《学霸》',type:'extra',goal:'填写具体页数；围绕真正不会的地方引导'},
- 'other':{name:'其他课外作业',type:'extra',goal:'填写今天具体内容与完成标准'}
+ 'math-school':{name:'数学课内作业',type:'school',priority:'p0',goal:'先理题意，再尝试独立完成'},
+ 'zh-school':{name:'语文课内作业',type:'school',priority:'p0',goal:'确认任务要求，完成后一起交流'},
+ 'en-school':{name:'英语课内作业',type:'school',priority:'p0',goal:'结合听说读写要求，互动后尝试'},
+ 'xueba':{name:'数学《学霸》',type:'extra',priority:'p2',goal:'填写具体页数；围绕真正不会的地方引导'},
+ 'other':{name:'其他课外作业',type:'extra',priority:'p2',goal:'填写今天具体内容与完成标准'}
 };
 function getJSON(key){try{return JSON.parse(localStorage.getItem(key)||'null')}catch(e){return null}}
 let pool=getJSON(poolKey)||{};
-pool.tasks=pool.tasks||{};pool.selected=pool.selected||{};pool.done=pool.done||{};pool.routines=pool.routines||{};pool.routineMinutes=pool.routineMinutes||{};
+pool.tasks=pool.tasks||{};pool.selected=pool.selected||{};pool.done=pool.done||{};pool.routines=pool.routines||{};pool.routineMinutes=pool.routineMinutes||{};pool.priorities=pool.priorities||{};pool.allocations=pool.allocations||{};
 let plans=getJSON(planKey)||{};
 let now=new Date();now.setHours(12,0,0,0);
 function monday(d){let x=new Date(d);x.setHours(12,0,0,0);x.setDate(x.getDate()-(x.getDay()+6)%7);return x}
@@ -391,6 +420,43 @@ function dailyEstimate(t){let n=pool.routineMinutes[dateKey()]?.[t.id];return Nu
 function duration(){return Number(draft().duration)||90}
 function capacity(){return duration()-(duration()===90?20:18)}
 function taskEstimate(t){return t.daily?dailyEstimate(t):Number(t.minutes)||15}
+function assignedMinutes(t){
+ const n=pool.allocations[dateKey()]?.[t.id];
+ return Number(n)>0?Number(n):taskEstimate(t);
+}
+function taskPriority(t){
+ if(t.daily)return 'routine';
+ const manually=pool.priorities[dateKey()]?.[t.id];
+ if(priorityWeights[manually]!==undefined)return manually;
+ if(t.dueDate&&t.dueDate<=dateKey())return 'p0';
+ if(t.id==='course-pu2'&&day===3)return 'p0'; // planned Thu completion window; confirm actual homework.
+ if(t.priority&&priorityWeights[t.priority]!==undefined)return t.priority;
+ if(t.type==='school')return 'p0';
+ if(t.type==='writing'||t.type==='extra')return 'p2';
+ return 'p1';
+}
+function reason(t){
+ if(t.why)return t.why;
+ if(t.dueDate)return '明确截止 '+t.dueDate;
+ if(t.daily)return '每日例行：按实际课程要求';
+ if(t.id==='course-pu2')return '周日课程作业，约定周三～四处理';
+ if(t.id.startsWith('course-pu3'))return '有道固定课程作业，实际截止待核对';
+ if(t.type==='school')return '学校当天实际要求';
+ if(t.type==='writing')return '基础书写熟练度训练，时间可调';
+ if(t.type==='extra')return '有余量再安排，不重复已经掌握的内容';
+ return '按课程要求和当前进度判断';
+}
+function activeTasks(){return selectedTasks().concat(dailyTasks()).filter(t=>!pool.done[doneKey(t)])}
+function planUsedMinutes(){return activeTasks().reduce((n,t)=>n+assignedMinutes(t),0)}
+function dayCandidates(){
+ const seen=new Set();
+ return tasks().filter(t=>{
+  if(t.daily||pool.done[doneKey(t)])return false;
+  if(t.date&&t.date!==dateKey())return false;
+  if(!seen.has(t.id)){seen.add(t.id);return true}
+  return false;
+ }).sort((a,b)=>priorityWeights[taskPriority(a)]-priorityWeights[taskPriority(b)]);
+}
 function markDone(t,value){pool.done[doneKey(t)]=value;save();render()}
 function toggleSelected(t){const ids=selectedIds().slice();if(ids.includes(t.id))pool.selected[dateKey()]=ids.filter(id=>id!==t.id);else if(ids.length>=3){showStatus('一次最多选择三个主任务，先移出一项');return}else pool.selected[dateKey()]=ids.concat(t.id);save();render()}
 function toggleDaily(t){let list=dailyIds().slice();if(list.includes(t.id))list=list.filter(id=>id!==t.id);else list.push(t.id);pool.routines[dateKey()]=list;save();render()}
@@ -398,11 +464,20 @@ function fmtTask(t){
  const chosen=t.daily?dailyIds().includes(t.id):selectedIds().includes(t.id);
  const done=!!pool.done[doneKey(t)];
  let action='<button type="button" class="smallbtn'+(chosen?' out':'')+'" data-toggle="'+esc(t.id)+'">'+(chosen?'移出今日':'加入今天')+'</button>';
- let meta=esc(t.note||t.goal||'')+' · '+(t.daily?'预计 ': '约 ')+taskEstimate(t)+' 分钟';
+ let meta=esc(reason(t))+' · '+(t.daily?'预计 ':'参考 ')+taskEstimate(t)+' 分钟';
+ if(!t.daily)meta+=' · '+(t.dueDate?'截止 '+esc(t.dueDate):'截止待核对');
+ const priorityCtl=t.daily?'<span class="priority-label">每日例行</span>':
+ '<label class="priority-label">今天的优先级 <select class="priority-select" data-priority="'+esc(t.id)+'">'+
+ ['p0','p1','p2'].map(p=>'<option value="'+p+'"'+(taskPriority(t)===p?' selected':'')+'>'+priorityLabels[p]+'</option>').join('')+'</select></label>';
  if(t.daily)meta+=' <label class="no-print" style="display:inline-flex;align-items:center;gap:4px">调整 <input data-minutes="'+esc(t.id)+'" type="number" min="2" max="60" aria-label="'+esc(t.name)+'分钟预算" value="'+taskEstimate(t)+'" style="width:61px;padding:3px 5px;font-size:11px"> 分钟</label>';
- return '<div class="pool-task'+(chosen?' selected':'')+(done?' finished':'')+'"><div><div class="task-name">'+esc(t.name)+' <span class="tag">'+esc(t.daily?'每日':(labels[t.type]||'任务'))+'</span></div><div class="task-meta">'+meta+'</div><div class="task-subs pool-actions">'+action+' <button type="button" class="smallbtn out" data-done="'+esc(t.id)+'">'+(done?'撤销完成':'标记完成')+'</button>'+(t.date?'<button type="button" class="smallbtn out" data-delete="'+esc(t.id)+'">删除</button>':'')+'</div></div></div>';
+ return '<div class="pool-task'+(chosen?' selected':'')+(done?' finished':'')+'"><div><div class="task-name">'+esc(t.name)+' <span class="tag">'+esc(t.daily?'每日':(labels[t.type]||'任务'))+'</span></div><div class="task-meta">'+meta+'</div><div class="task-subs pool-actions">'+priorityCtl+' '+action+' <button type="button" class="smallbtn out" data-done="'+esc(t.id)+'">'+(done?'撤销完成':'标记完成')+'</button>'+(t.date?'<button type="button" class="smallbtn out" data-delete="'+esc(t.id)+'">删除</button>':'')+'</div></div></div>';
 }
 function bindPoolButtons(root){
+ root.querySelectorAll('[data-priority]').forEach(sel=>sel.addEventListener('change',()=>{
+  const d=dateKey();if(!pool.priorities[d])pool.priorities[d]={};
+  pool.priorities[d][sel.dataset.priority]=sel.value;
+  save();render();
+ }));
  root.querySelectorAll('[data-toggle]').forEach(b=>b.addEventListener('click',()=>{const t=getTask(b.dataset.toggle);if(t){if(t.daily)toggleDaily(t);else toggleSelected(t)}}));
  root.querySelectorAll('[data-done]').forEach(b=>b.addEventListener('click',()=>{const t=getTask(b.dataset.done);if(t)markDone(t,!pool.done[doneKey(t)])}));
  root.querySelectorAll('[data-delete]').forEach(b=>b.addEventListener('click',()=>{
@@ -456,6 +531,29 @@ function updateGoalSummaries(){
  $('verifyPlanSummary').textContent=verify?'验收标准：'+verify:'验收标准待确认';
  $('verifyExecuteSummary').textContent=verify?'验收标准：'+verify:'验收标准待确认';
 }
+function renderPlanningRecommendation(){
+ const available=capacity(),chosen=activeTasks(),used=planUsedMinutes();
+ const ordered=chosen.slice().sort((a,b)=>(priorityWeights[taskPriority(a)]??1)-(priorityWeights[taskPriority(b)]??1));
+ const p0=ordered.filter(t=>taskPriority(t)==='p0'),p2=ordered.filter(t=>taskPriority(t)==='p2');
+ const candidates=dayCandidates().filter(t=>!selectedIds().includes(t.id));
+ let advice='';
+ if(used>available){
+  advice=p2.length?'超时 '+(used-available)+' 分钟：优先顺延 '+p2.map(t=>t.name).join('、')+'；不够再调整重要任务。':
+   '超时 '+(used-available)+' 分钟：已没有可调任务，需要成人拆小必做任务或安排另一时段，不由 Lemon 无限制延长。';
+ }else if(!p0.length && candidates.some(t=>taskPriority(t)==='p0')){
+  advice='还有真实必做任务尚未选入，先核对这些任务的截止日期。';
+ }else if(!chosen.length){
+  advice='先把必须完成的任务选入；再判断是否有一个值得集中解决的薄弱点。';
+ }else{
+  const headroom=available-used;
+  const p1=candidates.find(t=>taskPriority(t)==='p1'&&taskEstimate(t)<=headroom);
+  advice=p1?'尚余 '+headroom+' 分钟。可考虑 '+p1.name+'（重要而非必做），但以当天精力为准。':'尚余 '+headroom+' 分钟。不要为了填满时间再加无价值练习。';
+ }
+ const sequence=ordered.map(t=>priorityLabels[taskPriority(t)]||'例行') .map((label,i)=>label+' · '+ordered[i].name+' '+assignedMinutes(ordered[i])+'分');
+ $('planRecommendation').innerHTML='<strong>规划判断</strong><div>'+esc(advice)+'</div>'+
+ (sequence.length?'<div class="proposal">建议顺序：'+sequence.map(esc).join(' → ')+'</div>':'')+
+ '<div class="info">优先级可改，时间可调；标记已完成后不再占用剩余学习时间。</div>';
+}
 function renderChoices(){
  let d=draft(), all=selectedTasks().concat(dailyTasks());
  let oldFirst=d.first;
@@ -479,19 +577,25 @@ function renderChoices(){
  $('win').value=d.win||'';$('adultHelp').value=d.adultHelp||'';$('leftover').value=d.leftover||'';
  const arr=selectedTasks();
  const daily=dailyTasks();
- const sum=arr.reduce((v,t)=>v+taskEstimate(t),0)+daily.reduce((v,t)=>v+taskEstimate(t),0);
+ const sum=planUsedMinutes();
  $('counter').textContent=arr.length+'/3 主任务';
  $('selectedList').innerHTML=arr.length||daily.length?
-  arr.map(t=>'<div class="selected-task"><div><b>'+esc(t.name)+'</b><small>约'+taskEstimate(t)+'分钟</small></div><button class="smallbtn out no-print" data-unselect="'+esc(t.id)+'">移出</button></div>').join('')+
-  daily.map(t=>'<div class="selected-task"><div><b>'+esc(t.name)+' <span class="tag">每日</span></b><small>约'+taskEstimate(t)+'分钟</small></div></div>').join(''):
+  arr.map(t=>'<div class="selected-task"><div><b>'+esc(t.name)+'</b><small>'+priorityLabels[taskPriority(t)]+' · '+esc(reason(t))+(pool.done[doneKey(t)]?' · 已完成':'')+'</small></div><label class="priority-label no-print">计划<input class="alloc-input" data-alloc="'+esc(t.id)+'" type="number" min="2" max="120" value="'+assignedMinutes(t)+'">分</label><button class="smallbtn out no-print" data-unselect="'+esc(t.id)+'">移出</button></div>').join('')+
+  daily.map(t=>'<div class="selected-task"><div><b>'+esc(t.name)+' <span class="tag">每日</span></b><small>例行承诺'+(pool.done[doneKey(t)]?' · 已完成':'')+'</small></div><small>约'+assignedMinutes(t)+'分</small></div>').join(''):
   '<p class="info">尚未选择任务。先在左侧安排。</p>';
  $('selectedList').querySelectorAll('[data-unselect]').forEach(b=>b.addEventListener('click',()=>{let t=getTask(b.dataset.unselect);if(t)toggleSelected(t)}));
+ $('selectedList').querySelectorAll('[data-alloc]').forEach(input=>input.addEventListener('change',()=>{
+  const d=dateKey();if(!pool.allocations[d])pool.allocations[d]={};
+  pool.allocations[d][input.dataset.alloc]=Math.max(2,Math.min(120,Number(input.value)||15));
+  save();render();
+ }));
  const budget=capacity();
  $('budgetText').textContent='任务预算 / 可用约'+budget+'分钟';
  $('usedText').textContent=sum+'分钟';
  $('meterFill').style.width=Math.min(100,sum/budget*100)+'%';
  $('meter').className='meter'+(sum>budget?' over':'');
- $('budgetNote').textContent=sum>budget?'目前预估超时：成人应缩小任务范围、删减弹性练习或另作安排。':'预留计划、休息和回顾时间。互动引导计入任务时段，不另外加时。';
+ $('budgetNote').textContent=sum>budget?'已超过家庭共学可用任务时长；先检查 P2，必要时缩小P1；P0如确实超量要拆分或另作安排。':'预留计划、休息和回顾；互动引导计入任务时长。';
+ renderPlanningRecommendation();
 }
 function scheduleParts(){return duration()===60?[5,14,4,14,4,14,5]:duration()===75?[5,19,4,19,4,19,5]:[5,23,5,23,5,24,5]}
 function renderSchedule(){
@@ -532,9 +636,9 @@ function renderDone(){
 function render(){renderWeek();renderTasks();renderChoices();renderSchedule();renderDone();save()}
 function writingLevels(){return $('writingLang').value==='zh'?['50字','100字','150字','250字','350字','500字']:['1行','2～3行','5行','一个短段','一页短文']}
 function renderWriting(){const levels=writingLevels();$('writingLevel').innerHTML=levels.map(s=>'<option>'+esc(s)+'</option>').join('')}
-function addTask(name,type,mins,goal){
+function addTask(name,type,mins,goal,options={}){
  const id='added-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6);
- pool.tasks[id]={id,week:weekKey(),date:dateKey(),name,type,minutes:mins,goal,note:goal};
+ pool.tasks[id]={id,week:weekKey(),date:dateKey(),name,type,minutes:mins,goal,note:goal,...options};
  save();render();return id;
 }
 function copyText(){
@@ -548,7 +652,8 @@ function copyText(){
   '【当天固定课外课程（单独占用时间）】',
   ...((extraClassSchedule[day]||[]).map(c=>c.period+' · '+c.subject).length?(extraClassSchedule[day]||[]).map(c=>c.period+' · '+c.subject):['无']),
   '【任务池选出】',
-  ...all.map((t,i)=>(i+1)+'. '+t.name+'（约'+taskEstimate(t)+'分钟） · '+(t.goal||'')),
+  ...all.map((t,i)=>(i+1)+'. '+t.name+'（'+(t.daily?'每日例行':priorityLabels[taskPriority(t)])+'；安排'+assignedMinutes(t)+'分钟） · '+reason(t)+' · '+(t.goal||'')),
+  '【时间预算】总时长 '+duration()+'分钟，其中可安排任务约'+capacity()+'分钟；当前未完成任务分配'+planUsedMinutes()+'分钟，余量'+(capacity()-planUsedMinutes())+'分钟。',
   '【共同约定】',
   '先做：'+(getTask(d.first)?.name||'待选'),
   '我的责任：'+d.commitment,
@@ -573,13 +678,15 @@ function copyText(){
 $('prevWeek').addEventListener('click',()=>{week=plusDays(week,-7);render()});
 $('nextWeek').addEventListener('click',()=>{week=plusDays(week,7);render()});
 $('presets').querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{
- const p=presets[b.dataset.preset];$('newTask').value=p.name;$('newKind').value=p.type;$('newGoal').value=p.goal;$('newTask').focus();
+ const p=presets[b.dataset.preset];$('newTask').value=p.name;$('newKind').value=p.type;$('newGoal').value=p.goal;$('newPriority').value=p.priority||'p2';$('newTask').focus();
 }));
 $('addTask').addEventListener('click',()=>{
  const name=$('newTask').value.trim();
  if(!name){showStatus('请先填写今天的具体作业');$('newTask').focus();return}
- addTask(name,$('newKind').value,Math.max(3,Math.min(120,Number($('newEstimate').value)||15)),$('newGoal').value.trim()||'一起确认方法，然后 Lemon 自己尝试');
- $('newTask').value='';$('newGoal').value='';showStatus('任务已加入'+dateKey()+'的任务池，可点击加入今天');
+ addTask(name,$('newKind').value,Math.max(3,Math.min(120,Number($('newEstimate').value)||15)),$('newGoal').value.trim()||'一起确认方法，然后 Lemon 自己尝试', {
+ priority:$('newPriority').value,dueDate:$('newDeadline').value,why:$('newWhy').value.trim()
+ });
+ $('newTask').value='';$('newGoal').value='';$('newWhy').value='';$('newDeadline').value='';showStatus('任务已加入'+dateKey()+'的任务池，可点击加入今天');
 });
 $('writingLang').addEventListener('change',renderWriting);
 $('addWriting').addEventListener('click',()=>{
