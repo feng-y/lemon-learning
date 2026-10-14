@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-14T12:07:00+08:00",
+  "note": "校内及课外教材的具体授课进度尚待家长提供。除明确注明的辅导观察外，页面不按日期臆测已学章节。",
+  "subjects": {
+    "chinese": {
+      "current": "",
+      "next": "",
+      "status": "unknown",
+      "source": "待确认学校当前课文与下一课"
+    },
+    "math": {
+      "current": "",
+      "next": "",
+      "status": "unknown",
+      "source": "待确认学校当前单元及家中补强进度"
+    },
+    "pep": {
+      "current": "",
+      "next": "",
+      "status": "unknown",
+      "source": "待确认 PEP 四上 Unit"
+    },
+    "pu3": {
+      "current": "",
+      "next": "",
+      "status": "unknown",
+      "source": "待确认有道 PU3 课程进度"
+    },
+    "pu2": {
+      "current": "",
+      "next": "",
+      "status": "unknown",
+      "source": "待确认新东方 PU2 课程进度"
+    }
+  },
+  "reviewSignals": [
+    {
+      "id": "math-multiplication-place-value",
+      "subject": "math",
+      "observedAt": "2026-10-12",
+      "topic": "三位数乘两位数：十位乘法与竖式数位对齐",
+      "action": "用 236×42=236×2+236×40 解释为什么第二行要左移一位；尝试一题相近变式。",
+      "status": "needs-check",
+      "source": "2026-10-12 家教反馈；这属于观察到的薄弱点，不代表已核实校内教学章节。"
+    }
+  ]
+}
