@@ -1,12 +1,31 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f7f3"><meta name="description" content="Lemon 任务标尺：区分参考用时、真实表现和本次约定，通过可兑现的小进步建立独立任务完成能力与信心。"><title>Lemon · 任务完成与信心</title><link rel="stylesheet" href="./task-ruler.css?v=20261014-1"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f7f3"><meta name="description" content="Lemon 任务标尺：区分参考用时、真实表现和本次约定，通过可兑现的小进步建立独立任务完成能力与信心。"><title>Lemon · 任务完成与信心</title><link rel="stylesheet" href="./task-ruler.css?v=20261014-1"><link rel="stylesheet" href="./learning-background.css?v=20261014-1"></head>
 <body><div class="shell">
 <header class="top"><a class="brand" href="./">LEMON / LEARNING</a><nav class="resources" aria-label="教学资料"><a href="./overview/">学习总览</a><a href="./overview/#subjects">学科教材</a><a href="./tutoring/">家教手册</a><a href="./conversation/">沟通观察</a><a href="./guide/">教学指南</a><a href="./lemon/">给 Lemon</a></nav></header>
 <div class="title"><div><span class="eyebrow">本轮主线 · 任务完成能力与信心</span><h1>合理估计，自己完成，看见进步。</h1><p class="lead">先认清一项任务有多大，再约定这次做多少、用多久。学霸、书写和英语是载体，进步不等于不断加量。</p></div><div class="date field"><label for="sessionDate">学习日期</label><input id="sessionDate" type="date" required></div></div>
-<nav class="nav" aria-label="本次共学"><a href="#stage-goal"><b>01</b>任务标尺</a><a href="#stage-plan"><b>02</b>本次约定</a><a href="#stage-execute"><b>03</b>实测与反馈</a></nav>
+<nav class="nav" aria-label="本次共学"><a href="#background">背景依据</a><a href="#stage-goal"><b>01</b>任务标尺</a><a href="#stage-plan"><b>02</b>本次约定</a><a href="#stage-execute"><b>03</b>实测与反馈</a></nav>
 <noscript><div class="noscript">当前浏览器没有启用 JavaScript。三个工作区及统一规则仍可阅读；填写、统计与本地保存需要启用 JavaScript。</div></noscript>
 <main>
+<section class="stage background" id="background" aria-labelledby="backgroundHeading">
+<div class="background-heading"><div><span class="eyebrow">制定计划前 · 背景依据</span><h2 id="backgroundHeading">先看课程与进度，再安排今天。</h2></div><a href="#stage-plan">进入本次约定 ↓</a></div>
+<p class="note">课表、课外课和教材进度是安排的输入；本轮仍以任务完成能力与信心为目标，不因有课或预习建议自动加量。</p>
+<div class="background-calendar" aria-label="选择背景与本次记录共用的日期">
+ <div class="background-weekbar"><button type="button" id="backgroundPrev" class="btn small secondary" aria-label="上一周">← 上周</button><strong id="backgroundWeekLabel" aria-live="polite">当前周</strong><div class="row"><button type="button" id="backgroundToday" class="btn small secondary">今天</button><button type="button" id="backgroundNext" class="btn small secondary" aria-label="下一周">下周 →</button></div></div>
+ <div class="background-week" id="backgroundDays" aria-label="本周日期"></div>
+</div>
+<div class="background-layout">
+ <section class="background-panel" aria-labelledby="backgroundCoursesTitle">
+  <h3 id="backgroundCoursesTitle">课程与时间约束</h3>
+  <div class="background-school"><strong id="backgroundSchoolTitle">当天校内课程</strong><ol id="backgroundSchoolLessons" class="background-lessons"></ol><p class="note" id="backgroundSchoolNote">核对老师实际作业，不把课表变成新增任务。</p></div>
+  <div class="background-extra"><h4>固定课外课程</h4><div id="backgroundExtraClasses"></div><p class="note">上课单独占用时间；家庭共学预算还要考虑当天已有课程。</p></div>
+  <p class="background-routine">每日小书童、单词与课程作业仍在已有任务池中，确认本次范围后再带入约定。</p>
+ </section>
+<section class="background-panel" id="learningContext" aria-labelledby="learningContextTitle"><h3 id="learningContextTitle">学什么 · 预习什么</h3><div class="guide-grid"><div><h3>当天学习建议</h3><p id="guideTodayDate" class="guide-when"></p><div id="guideToday"></div></div><div><h3>下一上课日预习</h3><p id="guidePreviewDate" class="guide-when"></p><div id="guidePreview"></div></div></div><p id="guideScope" class="note"></p><details><summary>未来七天建议</summary><div id="guideWeek"></div></details><details><summary>更新教材进度</summary><p id="guideOrigin" class="note"></p><datalist id="guideMathUnits"><option value="认识更大的数"><option value="线与角"><option value="整数乘法（二）"><option value="我们生活的空间（二）"><option value="运算律"><option value="图形的奥秘"><option value="运用数量关系解决问题"><option value="数据的表示和分析（一）"></datalist><div id="guideProgressForm"></div><div class="actions"><button type="button" class="btn secondary" id="guideCopyProgress">复制进度摘要</button><button type="button" class="btn secondary" id="guideResetProgress">恢复仓库进度</button></div></details><p id="guideStatus" class="school-note" role="status"></p></section>
+</div>
+<div id="calendar" hidden aria-hidden="true"></div>
+<p class="background-link">看清背景后，沿同一条主线推进：<a href="#stage-goal">任务标尺</a> → <a href="#stage-plan">本次约定</a> → <a href="#stage-execute">实测与反馈</a>。</p>
+</section>
 <section class="stage" id="stage-goal" aria-labelledby="rulerHeading">
 <div class="section-head"><span class="index">01</span><h2 id="rulerHeading">先看任务标尺，不先定一个“必须多快”</h2></div>
 <div class="grid"><div class="field"><label for="template">选一种常见任务</label><select id="template" aria-describedby="templateScope"></select></div><div class="field"><label for="focus">这次只改善一件事</label><select id="focus"><option>独立完成一小段，再集中检查</option><option>连续完成约定任务，减少离题停顿</option><option>先自查，再请成人确认</option><option>保持一处书写规范</option><option>质量不下降，逐步缩短用时</option></select></div></div>
@@ -42,11 +61,10 @@
 <p class="note">输入自动保存为当天草稿。点击“保存已填实测”才进入历史；未测留空，不算零，也不算失败。</p>
 <details><summary>同类任务的已保存记录</summary><div id="history"></div></details>
 </section>
-<section class="stage" id="context" aria-labelledby="contextHeading"><h2 id="contextHeading">安排依据与统一辅导口径</h2>
+<section class="stage" id="context" aria-labelledby="contextHeading"><h2 id="contextHeading">统一辅导口径与记录交接</h2>
 <details><summary>家长和家教：同一套计时、检查和认可方式</summary><div class="context-grid"><div><h3>开始前</h3><p>先看实际材料、必要性和难度。参考用时是方向，最近真实表现决定本次约定；没有数据先观察。成人掌握总量，Lemon 参与顺序和责任。</p><h3>执行中</h3><p>引导 → 一起试 → Lemon 自己完成小段 → 集中检查。真正不会就教，长讲解另记。一次只抓一个规范或一个独立行为，不逐字逐题打断。</p></div><div><h3>结束时</h3><p>同时看任务量、用时、质量和帮助。未达成先判断估量是否合理、知识是否会、过程在哪里中断；不直接归为态度差。</p><h3>下次</h3><p>同等质量下减少提醒、缩短用时或增加连续完成量，都可能是进步。先稳定，再只改一个维度。奖励照事先约定，不因进步加任务。</p></div></div></details>
-<details><summary>当天课表、课程占用与任务池节奏</summary><div id="calendar" class="calendar"></div><p>有道PU3：周三、周六晚上；数学培优：周六上午；新东方PU2：周日下午。PU2作业按周三～四处理，小书童和单词为每日例行。课程不等于新增作业，周三～四是家庭安排窗口，不冒充教师截止日。</p></details>
-<details id="learningContext"><summary>教材进度、学什么与预习什么（过程依据）</summary><div class="guide-grid"><div><h3>当天学习建议</h3><p id="guideTodayDate" class="guide-when"></p><div id="guideToday"></div></div><div><h3>下一上课日预习</h3><p id="guidePreviewDate" class="guide-when"></p><div id="guidePreview"></div></div></div><p id="guideScope" class="note"></p><details><summary>未来七天建议</summary><div id="guideWeek"></div></details><details><summary>更新教材进度</summary><p id="guideOrigin" class="note"></p><datalist id="guideMathUnits"><option value="认识更大的数"><option value="线与角"><option value="整数乘法（二）"><option value="我们生活的空间（二）"><option value="运算律"><option value="图形的奥秘"><option value="运用数量关系解决问题"><option value="数据的表示和分析（一）"></datalist><div id="guideProgressForm"></div><div class="actions"><button type="button" class="btn secondary" id="guideCopyProgress">复制进度摘要</button><button type="button" class="btn secondary" id="guideResetProgress">恢复仓库进度</button></div></details><p id="guideStatus" class="school-note" role="status"></p></details>
+
 <details><summary>记录备份与跨设备交接</summary><p>页面没有云端数据库。记录只在当前设备、浏览器和域名；家教与家长通过复制记录交接，换域名前先导出。旧任务池和教材草稿仍保留，不会自动变成实测。</p><div class="actions"><button type="button" class="btn secondary" id="exportData">导出本地备份</button><label class="btn secondary" for="importData">导入备份</label><input id="importData" class="no-print" type="file" accept=".json,application/json" hidden></div></details>
 </section>
 </main><footer class="footer">Lemon · 本轮任务标尺 v0.1 / 2026-10-14。参考是暂定预算，实测才是个体证据。不生成“自觉性总分”。</footer></div><div id="status" class="toast" role="status" aria-live="polite" hidden></div>
-<script src="./task-ruler.js?v=20261014-1"></script><script src="./learning-guide.js" defer></script></body></html>
+<script src="./task-ruler.js?v=20261014-1"></script><script src="./learning-background.js?v=20261014-1"></script><script src="./learning-guide.js" defer></script></body></html>
