@@ -1,0 +1,42 @@
+/* Background belongs before the workflow, not inside a collapsed footer.
+   Rules are scoped here so the task ruler, agreement and measurement views stay intact. */
+.background-heading{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:8px}
+.background-heading h2{font-size:23px;margin-top:4px}
+.background-heading>a{font-size:13px;white-space:nowrap;text-decoration:none}
+.background-calendar{margin:18px 0;border:1px solid var(--line);border-radius:9px;padding:14px}
+.background-weekbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.background-weekbar>strong{font-size:14px;font-variant-numeric:tabular-nums}
+.background-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+.background-day{background:#f9fbf8;border:1px solid var(--line);border-radius:8px;padding:10px 4px;color:var(--ink);text-align:center;min-width:0}
+.background-day>span,.background-day>strong,.background-day>small{display:block}
+.background-day>span{font-size:12px;color:var(--muted)}
+.background-day>strong{font-size:20px;line-height:1.6}
+.background-day>small{font-size:11px;color:var(--accent);line-height:1.4;white-space:nowrap}
+.background-day[aria-pressed="true"]{background:var(--soft);border-color:#729b85;box-shadow:inset 0 0 0 1px #729b85}
+.background-layout{display:grid;grid-template-columns:minmax(0,.84fr) minmax(0,1.16fr);gap:18px;align-items:start}
+.background-panel{min-width:0}
+.background-panel>h3{font-size:16px;margin-bottom:12px}
+.background-school{border-bottom:1px solid var(--line);padding-bottom:12px}
+.background-school>strong{font-size:14px}
+.background-lessons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;padding:0;margin:12px 0;list-style:none}
+.background-lessons>li{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:7px;padding:8px;min-width:0;font-size:13px}
+.background-lessons small{font-size:11px;color:var(--muted);flex-shrink:0}
+.background-extra{padding:12px 0}
+.background-extra h4{font-size:14px;margin:0 0 9px}
+.background-class{display:flex;align-items:baseline;gap:8px;background:var(--soft);border-radius:7px;padding:9px 10px;margin:7px 0;font-size:13px}
+.background-class>strong{white-space:nowrap}
+.background-routine{font-size:12px;color:var(--muted);margin:0}
+.background .guide-grid{gap:14px}
+.background .guide-grid>div{min-width:0}
+.background .guide-grid h3{font-size:14px;margin:0 0 4px}
+.background .guide-point-top{flex-wrap:wrap;gap:4px 8px}
+.background .guide-point-top b{font-size:13px}
+.background .guide-point p{line-height:1.75}
+.background #guideScope{font-size:12px;margin:12px 0 0}
+.background .guide-week-row{grid-template-columns:82px minmax(0,1fr)}
+.background-link{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:12px;margin:18px 0 0}
+.background-link a{text-decoration:none}
+@media(max-width:960px){.background-layout{grid-template-columns:1fr;gap:22px}.background-lessons{grid-template-columns:repeat(3,minmax(0,1fr))}.background-extra{padding-bottom:8px}}
+@media(max-width:760px){.background-heading{align-items:flex-start}.background-heading h2{font-size:21px}.background-heading>a{font-size:12px}.background .guide-grid{grid-template-columns:1fr 1fr}.background-week{gap:4px}.background-weekbar{flex-wrap:wrap}.background-weekbar>strong{font-size:13px}.background-weekbar .row{gap:5px}}
+@media(max-width:480px){.background-heading{display:block}.background-heading>a{display:inline-block;margin-top:5px}.background-calendar{padding:10px;margin:14px 0}.background-weekbar>strong{order:-1;width:100%;text-align:center}.background-day{padding:8px 2px}.background-day>strong{font-size:18px}.background-day>small{font-size:10px}.background-lessons{grid-template-columns:repeat(2,minmax(0,1fr))}.background .guide-grid{grid-template-columns:1fr;gap:18px}.background .guide-point{padding:9px 0}.background .guide-week-row{grid-template-columns:70px minmax(0,1fr)}}
+@media print{.background-calendar,.background-heading>a,.background-link{display:none}.background-layout{display:block}.background-panel{margin:12px 0}.background-lessons{grid-template-columns:repeat(3,minmax(0,1fr))}.background{break-after:auto}}
