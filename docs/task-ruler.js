@@ -44,7 +44,7 @@ if(saved?.version===1&&saved.drafts&&Array.isArray(saved.history)){db=saved}
 let date=iso(new Date());
 $('sessionDate').value=date;
 function session(){if(!db.drafts[date])db.drafts[date]=defaults();return db.drafts[date]}
-function persist(){session().updatedAt=new Date().toISOString();try{localStorage.setItem(KEY,JSON.stringify(db));storageAvailable=true;return true}catch{storageAvailable=false;notify('浏览器未保存成功，请先复制记录或导出备份。');return false}}
+function persist(){session().updatedAt=new Date().toISOString();try{localStorage.setItem(KEY,JSON.stringify(db));storageAvailable=true;window.dispatchEvent(new Event('lemon:taskschange'));return true}catch{storageAvailable=false;notify('浏览器未保存成功，请先复制记录或导出备份。');return false}}
 function notify(s){$('status').textContent=s;$('status').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('status').hidden=true,6500)}
 function reference(tid,qty,familiarity){if(familiarity!=='familiar')return null;return template(tid).refs.find(r=>qty>=r.from&&qty<=r.to)||null}
 function refLabel(t){const r=reference(t.template,n(t.quantity),t.familiarity);return r?r.min+'–'+r.max+'分钟':'无可直接套用区间'}
@@ -53,7 +53,7 @@ function comparable(t){return db.history.filter(h=>h.date<=date&&h.id!==t.id&&h.
 function baseline(t){const rows=comparable(t);if(!rows.length)return null;const times=rows.map(h=>Number(h.actual)).sort((a,b)=>a-b);const m=times.length%2?times[(times.length-1)/2]:(times[times.length/2-1]+times[times.length/2])/2;return {rows,time:m}}
 function candidate(){return {template:$('template').value,quantity:n($('quantity').value),familiarity:$('familiarity').value,group:$('comparisonGroup').value,qualityRule:$('qualityRule').value}}
 function renderRuler(){const t=candidate(),r=reference(t.template,t.quantity,t.familiarity),b=baseline(t),info=template(t.template);$('templateScope').textContent=info.scope;$('unitLabel').textContent='（'+info.unit+'）';$('referenceTime').textContent=r?r.min+'–'+r.max+'分钟':t.familiarity==='learning'?'先教，再建立基线':'暂无同量参考';$('referenceScope').textContent=r?`${t.quantity}${info.unit}，已学常规任务；仅是试用预算。`:'其他字数或难度不按比例折算。';$('baselineTime').textContent=b?b.time+'分钟':'尚无同量实测';$('baselineNote').textContent=b?`最近${b.rows.length}次合格、同量同条件记录的中位用时。提醒和质量仍需一起看。`:(t.template==='zh-copy'?'已有500字约两小时的家长观察；不套用到小段，也不伪装成精确测量。':'尚未保存同类型、同量、同熟悉度且质量保持的记录。');$('plannedTime').textContent=n($('taskMinutes').value)>0?$('taskMinutes').value+'分钟':'本次预算待确认'}
-function fillTemplate(id){const t=template(id);$('template').value=t.id;$('taskName').value=t.name;$('quantity').value=t.quantity;$('familiarity').value='familiar';$('taskMinutes').value='';$('teachingMinutes').value=0;$('qualityRule').value=t.quality;$('comparisonGroup').value=t.group;$('deadline').value='';pendingLink=null;renderRuler()}
+function fillTemplate(id){const t=template(id);$('template').value=t.id;$('taskName').value=t.name;$('quantity').value=t.quantity;$('familiarity').value='familiar';$('taskMinutes').value='';$('teachingMinutes').value=0;$('qualityRule').value=t.quality;$('comparisonGroup').value=t.group;$('deadline').value='';pendingLink=null;plannerEditId=null;$('necessity').value='';renderRuler()}
 function catalogue(){$('template').innerHTML=TEMPLATES.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');$('rulerRows').innerHTML=TEMPLATES.map(t=>`<tr><td>${esc(t.name)}</td><td>${esc(t.scope)}</td><td>${esc(t.refText)}</td><td>${esc(t.quality)}</td></tr>`).join('')}
 function budget(){const s=session(),used=s.tasks.reduce((a,t)=>a+Number(t.planned)+Number(t.teaching),0),reserve=n(s.overhead)||0,total=n(s.sessionTotal)||90,remaining=total-reserve-used;const optional=s.tasks.filter(t=>t.necessity==='optional');$('budget').textContent=`任务与教学 ${used}分钟 + 计划／休息／收尾 ${reserve}分钟 = ${used+reserve} / ${total}分钟。`+(remaining<0?` 超出${-remaining}分钟：${optional.length?'先顺延可调任务；':'需由成人缩小范围或另安排，不能无限延时。'}`:` 尚余${remaining}分钟，不需要填满。`);$('budget').classList.toggle('warning',remaining<0)}
 const priorityLabel={required:'实际必交',important:'针对性学习',routine:'每日／课程例行',optional:'可顺延'};
@@ -67,14 +67,14 @@ function renderHistory(){const sorted=db.history.slice().sort((a,b)=>b.date.loca
 function saveMeasurements(){let count=0,skipped=0;const s=session();for(const t of s.tasks){if(t.done===''&&t.actual==='')continue;const done=n(t.done),actual=n(t.actual),teaching=n(t.teachActual),prompts=n(t.prompts);if(done===null||actual===null||teaching===null||!t.quality||done<0||actual<0||teaching<0||(done>0&&actual===0)||(t.prompts!==''&&(prompts===null||prompts<0||!Number.isInteger(prompts)))){skipped++;continue}const row={...t,date,owner:s.owner,focus:s.focus,confirmed:s.confirmed,commitment:s.commitment,fulfilled:s.fulfilled,reward:s.reward,rewardState:s.rewardState,confidence:s.confidence,nextAxis:s.nextAxis,nextStep:s.nextStep,savedAt:new Date().toISOString()};const ix=db.history.findIndex(h=>h.id===row.id);if(ix>=0)db.history[ix]=row;else db.history.push(row);count++}persist();renderResults();notify(`已保存${count}项实测${skipped?'；'+skipped+'项请补全完成量、实际用时、长讲解（无则0）和质量。':'。再次保存同一项会更新，不会重复计数。'}`)}
 function oldPoolCandidates(){const pool=read(PRIOR_KEYS[0])||{},selected=Array.isArray(pool.selected?.[date])?pool.selected[date]:[],d=day(date);const custom=Object.values(pool.tasks||{}).filter(t=>t&&t.date===date&&typeof t.id==='string').map(t=>({...t,template:typeof t.name==='string'&&t.name.includes('学霸')?'math-xueba':'custom'}));return [...FIXED.filter(t=>t.days.includes(d)||selected.includes(t.id)),...custom].map(t=>({...t,selected:selected.includes(t.id),priorEstimate:pool.allocations?.[date]?.[t.id]??t.minutes??null,done:!!pool.done?.[(t.daily?date:weekKey(date))+'|'+t.id]}))}
 function renderCandidates(){const list=oldPoolCandidates();$('poolCandidates').innerHTML=list.map(t=>`<div class="task-line"><div><b>${esc(t.name)}${t.selected?'<span class="pill">原已选</span>':''}${t.done?'<span class="pill">原标记完成</span>':''}</b><p>${t.done?'已有完成标记，但尚无实测。可补记录，不能当作新做一次。':'只带入材料与范围，再确认今天的约定。'}${n(t.priorEstimate)>0?' 旧预算'+Number(t.priorEstimate)+'分钟（非实测）。':''}</p></div><button class="btn small secondary" data-candidate="${esc(t.id)}">带入并确认</button></div>`).join('')||'<p>当天未记录其他实际作业。</p>';$('poolCandidates').querySelectorAll('[data-candidate]').forEach(b=>b.onclick=()=>{const t=list.find(x=>x.id===b.dataset.candidate);fillTemplate(t.template);$('taskName').value=t.name;$('necessity').value=t.daily?'routine':t.type==='school'?'required':'important';if(t.template==='custom'){$('quantity').value=1;$('comparisonGroup').value=t.name}pendingLink={id:t.id,daily:!!t.daily,week:weekKey(date)};renderRuler();$('taskName').focus();notify('已带入任务；请确认任务量、时间和质量后加入约定。')})}
-function renderCalendar(){const d=day(date);$('calendar').innerHTML=`<strong>${date} · ${['周一','周二','周三','周四','周五','周六','周日'][d]}</strong><p>校内：${SCHOOL[d]?SCHOOL[d].map((x,i)=>(i+1)+'. '+esc(x)).join(' / '):'无校内课表'}</p><p>课外：${(CLASSES[d]||[]).map(x=>esc(x.period+' '+x.subject)).join(' / ')||'无已登记固定课程'}</p>`;document.documentElement.dataset.lemonDate=date;window.dispatchEvent(new CustomEvent('lemon:datechange',{detail:{date,day:d}}))}
+function renderCalendar(){const d=day(date);$('calendar').innerHTML=`<strong>${date} · ${['周一','周二','周三','周四','周五','周六','周日'][d]}</strong><p>校内：${SCHOOL[d]?SCHOOL[d].map((x,i)=>(i+1)+'. '+esc(x)).join(' / '):'无校内课表'}</p><p>课外：${(CLASSES[d]||[]).map(x=>esc(x.period+' '+x.subject)).join(' / ')||'无已登记固定课外课'}</p>`;document.documentElement.dataset.lemonDate=date;window.dispatchEvent(new CustomEvent('lemon:datechange',{detail:{date,day:d}}))}
 const SESSION_FIELDS=['sessionTotal','overhead','owner','focus','commitment','reward','confirmed','fulfilled','rewardState','confidence','nextAxis','nextStep'];
 function renderSession(){const s=session();for(const key of SESSION_FIELDS){const e=$(key);if(e.type==='checkbox')e.checked=!!s[key];else e.value=s[key]??''}renderPlan();renderResults();renderCandidates();renderCalendar();persist()}
-function copyReport(){const s=session();const lines=[`Lemon｜${date}｜${s.owner}辅导`,`本轮目标：合理估量与独立完成任务，建立信心；本次只抓：${s.focus}`,`总预算${s.sessionTotal}分；计划／收尾／约定休息${s.overhead}分。`,`自主责任：${s.commitment||'未约定'}；双方确认：${s.confirmed?'是':'待确认'}。`];s.tasks.forEach((t,i)=>{const b=baseline(t);lines.push('',`${i+1}. ${t.name}｜${t.quantity}${t.unit}｜${priorityLabel[t.necessity]}`,`参考：${refLabel(t)}（试用，非达标线）；同量实测：${b?b.time+'分钟，n='+b.rows.length:'尚无'}。`,`本次约定：任务${t.planned}分 + 教学${t.teaching}分；质量：${t.qualityRule}`,`实际：${metric(t.done,t.unit)}，任务${metric(t.actual)}，长讲解${metric(t.teachActual)}，质量${t.quality==='met'?'保持':t.quality==='notmet'?'有问题':'待核对'}，提醒${metric(t.prompts,'次')}。`,`帮助：${({'independent':'独立','hint':'少量提示','repeated':'反复提醒或确认','taught':'共同教学'})[t.help]||'未记'}；证据：${t.evidence||'未记'}。`,verdict(t))});lines.push('',`自主责任验收：${({'yes':'已兑现','partial':'部分兑现','no':'未兑现，需核对原因'})[s.fulfilled]||'未验收'}；奖励：${s.reward} / ${s.rewardState}`,`自己做到的一步／原话：${s.confidence||'未观察，不推断'}`,`下次只改：${s.nextAxis}；${s.nextStep||'暂未定，先看实测'}`);const str=lines.join('\n');const fallback=()=>{const e=document.createElement('textarea');e.value=str;document.body.appendChild(e);e.select();let ok=false;try{ok=document.execCommand('copy')}catch{}e.remove();notify(ok?'记录已复制。':'复制不可用，请导出备份。')};if(navigator.clipboard?.writeText)navigator.clipboard.writeText(str).then(()=>notify('记录已复制，可发给家教、家长或继续同步。'),fallback);else fallback()}
+function copyReport(){const s=session();const lines=[`Lemon｜${date}｜${s.owner}辅导`,`本轮目标：合理估量与独立完成任务，建立信心；本次只抓：${s.focus}`,`总预算${s.sessionTotal}分；计划／收尾／约定休息${s.overhead}分。`,`自主责任：${s.commitment||'未约定'}；双方确认：${s.confirmed?'是':'待确认'}。`];s.tasks.forEach((t,i)=>{const b=baseline(t);lines.push('',`${i+1}. ${t.name}｜${t.quantity}${t.unit}｜${priorityLabel[t.necessity]}`,`参考：${refLabel(t)}（试用，非达标线）；同量实测：${b?b.time+'分钟，n='+b.rows.length:'尚无'}。`,`本次约定：任务${t.planned}分 + 教学${t.teaching}分；质量：${t.qualityRule}`,`估时依据：${t.planBasis?.text||'人工填写的约定'}；帮助：${t.planSupport||'按双方约定'}；${t.remainder?'原任务剩余'+t.remainder+t.unit+'仍需安排':''}`,`实际：${metric(t.done,t.unit)}，任务${metric(t.actual)}，长讲解${metric(t.teachActual)}，质量${t.quality==='met'?'保持':t.quality==='notmet'?'有问题':'待核对'}，提醒${metric(t.prompts,'次')}。`,`帮助：${({'independent':'独立','hint':'少量提示','repeated':'反复提醒或确认','taught':'共同教学'})[t.help]||'未记'}；证据：${t.evidence||'未记'}。`,verdict(t))});lines.push('',`自主责任验收：${({'yes':'已兑现','partial':'部分兑现','no':'未兑现，需核对原因'})[s.fulfilled]||'未验收'}；奖励：${s.reward} / ${s.rewardState}`,`自己做到的一步／原话：${s.confidence||'未观察，不推断'}`,`下次只改：${s.nextAxis}；${s.nextStep||'暂未定，先看实测'}`);const str=lines.join('\n');const fallback=()=>{const e=document.createElement('textarea');e.value=str;document.body.appendChild(e);e.select();let ok=false;try{ok=document.execCommand('copy')}catch{}e.remove();notify(ok?'记录已复制。':'复制不可用，请导出备份。')};if(navigator.clipboard?.writeText)navigator.clipboard.writeText(str).then(()=>notify('记录已复制，可发给家教、家长或继续同步。'),fallback);else fallback()}
 function downloadJSON(obj,name){const url=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
 function safeRecord(t){return t&&typeof t.id==='string'&&typeof t.name==='string'&&typeof t.template==='string'&&TEMPLATES.some(x=>x.id===t.template)&&n(t.quantity)>0&&n(t.planned)>0&&n(t.teaching)>=0&&typeof t.qualityRule==='string'&&typeof t.group==='string'}
 function validateImport(v){if(!v||v.format!=='lemon-task-ruler-backup'||v.version!==1||v.data?.version!==1||!v.data.drafts||!Array.isArray(v.data.history)||v.data.history.length>10000)throw Error('不是支持的任务标尺备份');for(const [k,d] of Object.entries(v.data.drafts)){if(!validDate(k)||!d||!Array.isArray(d.tasks)||d.tasks.length>100||!d.tasks.every(safeRecord)||![60,75,90].includes(Number(d.sessionTotal))||n(d.overhead)===null||n(d.overhead)<0)throw Error('日期或任务结构不正确')}for(const t of v.data.history){if(!safeRecord(t)||!validDate(t.date)||!Number.isFinite(Date.parse(t.savedAt))||n(t.actual)===null||n(t.actual)<0||n(t.done)===null||n(t.done)<0||n(t.teachActual)===null||n(t.teachActual)<0||!['met','notmet','unknown'].includes(t.quality))throw Error('实测记录不完整')}return v}
-$('taskForm').addEventListener('submit',e=>{e.preventDefault();if(!$('taskForm').reportValidity())return;const q=n($('quantity').value),planned=n($('taskMinutes').value),teaching=n($('teachingMinutes').value);if(!(q>0&&planned>0&&teaching>=0))return;const info=template($('template').value);const t={id:tid(),template:info.id,name:$('taskName').value.trim(),unit:info.unit,quantity:q,familiarity:$('familiarity').value,planned,teaching,qualityRule:$('qualityRule').value.trim(),group:$('comparisonGroup').value.trim()||info.group,necessity:$('necessity').value,deadline:$('deadline').value,link:pendingLink,done:'',actual:'',teachActual:'',quality:'',prompts:'',help:'',evidence:''};if(!t.name||!t.qualityRule){notify('请写明材料与完成标准。');return}if(t.familiarity==='learning'&&teaching===0){notify('这项尚不会：先明确如何教学或重新估量。当前仍可记录，但不要套熟练参考。')}session().tasks.push(t);pendingLink=null;persist();renderPlan();renderResults();$('taskMinutes').value='';renderRuler();notify('已加入本次约定。任务约定与教学时间分别计入总预算。')});
+$('taskForm').addEventListener('submit',e=>{e.preventDefault();if(!$('taskForm').reportValidity())return;const q=n($('quantity').value),planned=n($('taskMinutes').value),teaching=n($('teachingMinutes').value);if(!(q>0&&planned>0&&teaching>=0))return;const info=template($('template').value);const t={id:tid(),sourceId:plannerEditId||undefined,template:info.id,name:$('taskName').value.trim(),unit:info.unit,quantity:q,familiarity:$('familiarity').value,planned,teaching,qualityRule:$('qualityRule').value.trim(),group:$('comparisonGroup').value.trim()||info.group,necessity:$('necessity').value,deadline:$('deadline').value,link:pendingLink,done:'',actual:'',teachActual:'',quality:'',prompts:'',help:'',evidence:''};if(!t.name||!t.qualityRule){notify('请写明材料与完成标准。');return}if(t.familiarity==='learning'&&teaching===0){notify('这项尚不会：先明确如何教学或重新估量。当前仍可记录，但不要套熟练参考。')}session().tasks.push(t);pendingLink=null;plannerEditId=null;persist();renderPlan();renderResults();$('taskMinutes').value='';renderRuler();notify('已加入本次约定。任务约定与教学时间分别计入总预算。')});
 $('template').onchange=()=>fillTemplate($('template').value);['quantity','familiarity','taskMinutes','comparisonGroup','qualityRule'].forEach(id=>$(id).addEventListener(id==='familiarity'?'change':'input',renderRuler));
 SESSION_FIELDS.forEach(key=>$(key).addEventListener($(key).tagName==='SELECT'||$(key).type==='checkbox'?'change':'input',()=>{session()[key]=$(key).type==='checkbox'?$(key).checked:$(key).value;persist();if(key==='sessionTotal'||key==='overhead')budget()}));
 $('sessionDate').onchange=()=>{if(!validDate($('sessionDate').value)){$('sessionDate').value=date;return}persist();date=$('sessionDate').value;renderSession();renderRuler()};
@@ -82,5 +82,84 @@ $('saveMeasurements').onclick=saveMeasurements;$('copyRecord').onclick=copyRepor
 $('exportData').onclick=()=>downloadJSON({format:'lemon-task-ruler-backup',version:1,exportedAt:new Date().toISOString(),data:db,legacy:Object.fromEntries(PRIOR_KEYS.map(k=>[k,read(k)]))},'lemon-task-records-'+date+'.json');
 $('importData').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>5000000)throw Error('备份超过5MB');const v=validateImport(JSON.parse(await file.text()));if(!confirm('合并备份中的记录？同一日期草稿和同一条实测保留较新版本，不清空其他记录。'))return;for(const [k,d] of Object.entries(v.data.drafts)){if(!db.drafts[k]||(!db.drafts[k].tasks.length&&d.tasks.length)||String(d.updatedAt||'')>String(db.drafts[k].updatedAt||''))db.drafts[k]=d}for(const row of v.data.history){const i=db.history.findIndex(t=>t.id===row.id);if(i<0)db.history.push(row);else if(row.savedAt>db.history[i].savedAt)db.history[i]=row}for(const k of PRIOR_KEYS){if(!read(k)&&v.legacy?.[k]){try{localStorage.setItem(k,JSON.stringify(v.legacy[k]))}catch{}}}persist();renderSession();notify('备份已合并。旧任务池只在本机尚无该数据时恢复。')}catch(err){notify('未导入：'+err.message)}finally{e.target.value=''}};
 function navigation(){document.querySelectorAll('.nav a').forEach(a=>{if(a.hash===location.hash)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current')})}window.addEventListener('hashchange',navigation);
+
+// Planning owns a proposal only. This bridge owns task storage and adopts confirmed proposals.
+let plannerEditId=null;
+const planningKey=t=>t.sourceId||(t.link?.id?`pool:${t.link.daily?date:(t.link.week||weekKey(date))}:${t.link.id}`:t.id);
+function planningSnapshot(){
+ const s=session(),pool=read(PRIOR_KEYS[0])||{};
+ const linkedDone=t=>t.link?.id&&!!pool.done?.[(t.link.daily?date:(t.link.week||weekKey(date)))+'|'+t.link.id];
+ const sources=oldPoolCandidates().map(t=>({
+  id:`pool:${t.daily?date:weekKey(date)}:${t.id}`,name:t.name,template:t.template,unit:template(t.template).unit,
+  quantity:n(t.quantity),familiarity:t.familiarity||'',qualityRule:t.qualityRule||'',group:t.group||'',
+  necessity:t.necessity||(t.daily?'routine':t.type==='school'?'required':t.type==='extra'?'optional':'routine'),
+  deadline:t.dueDate||t.deadline||'',windowNote:t.id==='course-pu2'?'周三～四是家庭处理窗口，不是教师硬截止':'',
+  completed:t.done,priorEstimate:t.priorEstimate,link:{id:t.id,daily:!!t.daily,week:weekKey(date)}
+ }));
+ const staged=(Array.isArray(s.candidates)?s.candidates:[]).filter(t=>t&&typeof t.id==='string').map(t=>({...t,completed:linkedDone(t)}));
+ const existing=s.tasks.map(t=>({...t,sourceId:planningKey(t)}));
+ // Explicit staged details take precedence over placeholders from the fixed/legacy pool.
+ const used=new Set(existing.map(t=>t.sourceId)),ids=new Set();
+ const candidates=[...staged,...sources].filter(t=>{if(used.has(t.id)||ids.has(t.id))return false;ids.add(t.id);return true});
+ return JSON.parse(JSON.stringify({date,session:{sessionTotal:s.sessionTotal,overhead:s.overhead,focus:s.focus,commitment:s.commitment,tasks:existing},
+  candidates,history:db.history,templates:TEMPLATES,classes:CLASSES[day(date)]||[]}));
+}
+function stagePlanningForm(){
+ const fields=['taskName','quantity','qualityRule','necessity'];
+ for(const id of fields){if(!$(id).reportValidity())return false}
+ if(!['required','important','routine','optional'].includes($('necessity').value))return false;
+ if($('taskMinutes').value&&!$('taskMinutes').reportValidity())return false;
+ if(!$('teachingMinutes').reportValidity())return false;
+ const tpl=template($('template').value),s=session();
+ const id=plannerEditId||(pendingLink?`pool:${pendingLink.daily?date:(pendingLink.week||weekKey(date))}:${pendingLink.id}`:tid());
+ const c={id,template:tpl.id,name:$('taskName').value.trim(),unit:tpl.unit,quantity:n($('quantity').value),
+  familiarity:$('familiarity').value,qualityRule:$('qualityRule').value.trim(),group:$('comparisonGroup').value.trim()||tpl.group,
+  necessity:$('necessity').value,deadline:$('deadline').value,timeOverride:n($('taskMinutes').value),
+  teachingOverride:n($('teachingMinutes').value),splittable:$('plannerSplit').checked,link:pendingLink};
+ if(!Array.isArray(s.candidates))s.candidates=[];
+ const idx=s.candidates.findIndex(t=>t.id===id);if(idx<0)s.candidates.push(c);else s.candidates[idx]=c;
+ plannerEditId=id;persist();notify('已加入生成候选；用时留空将优先取同条件实测，其次才是试用参考。');return true;
+}
+function editPlanningCandidate(id){
+ const t=planningSnapshot().candidates.find(t=>t.id===id);if(!t)return;
+ fillTemplate(t.template);plannerEditId=t.id;pendingLink=t.link||null;
+ $('taskName').value=t.name;$('quantity').value=t.quantity??'';
+ $('necessity').value=t.necessity||'';$('familiarity').value=t.familiarity||'familiar';
+ $('qualityRule').value=t.qualityRule||template(t.template).quality;
+ $('comparisonGroup').value=t.group||t.name||template(t.template).group;
+ $('taskMinutes').value=t.timeOverride??'';$('teachingMinutes').value=t.teachingOverride??0;
+ $('deadline').value=t.deadline||'';$('plannerSplit').checked=!!t.splittable;
+ renderRuler();$('taskName').focus();$('taskForm').scrollIntoView({block:'start',behavior:'smooth'});
+}
+function adoptPlanningProposal(proposal,signature){
+ if(JSON.stringify(planningSnapshot())!==signature)throw Error('任务、日期或实测已改变，请重新生成；原约定未改动。');
+ const s=session(),selected=proposal.selected||[];
+ if(!selected.length)throw Error('没有可带入任务，请先补全待确认项。');
+ const seen=new Set(s.tasks.map(planningKey));
+ const sourceIds=new Set(planningSnapshot().candidates.filter(t=>!t.completed).map(t=>t.id));
+ if(selected.some(t=>!sourceIds.has(t.sourceId)||seen.has(t.sourceId)||!safeRecord(t)||n(t.teaching)<0))throw Error('草案任务无效或已带入，请重新生成。');
+ if(new Set(selected.map(t=>t.sourceId)).size!==selected.length)throw Error('草案有重复任务。');
+ const used=s.tasks.reduce((a,t)=>a+Number(t.planned)+Number(t.teaching),0)+selected.reduce((a,t)=>a+Number(t.planned)+Number(t.teaching),0)+Number(s.overhead);
+ if(used>Number(s.sessionTotal))throw Error('草案仍超过总时长，请调整任务或另安排；未改动原约定。');
+ const old=JSON.stringify(s);
+ const originals=new Map(planningSnapshot().candidates.map(t=>[t.id,t]));
+ for(const item of selected){const {basis,support,teachingBasis,...t}=item;s.tasks.push({...t,id:tid(),sourceId:item.sourceId,
+   planBasis:basis,planSupport:support,teachingBasis,remainder:item.remainder||0,
+   done:'',actual:'',teachActual:'',quality:'',prompts:'',help:'',evidence:''});
+   s.candidates=(s.candidates||[]).filter(c=>c.id!==item.sourceId);
+   if(item.remainder>0){const source=originals.get(item.sourceId);s.candidates.push({...source,id:tid(),name:source.name+'（剩余）',
+     quantity:item.remainder,link:null,timeOverride:null,completed:false,parentSource:item.sourceId});}
+ }
+ // Remainders are not silently marked completed. Confirmation is still a conversation with Lemon.
+ s.lastProposal={date,version:proposal.version,unresolved:[...(proposal.pending||[]),...(proposal.deferred||[])].map(t=>({name:t.name,quantity:t.quantity,unit:t.unit,reason:t.reason})),focus:proposal.focus};
+ if(!s.confirmed&&s.tasks.length===selected.length){s.focus=proposal.focus.focus;s.commitment=proposal.focus.commitment}
+ s.confirmed=false;
+ if(!persist()){db.drafts[date]=JSON.parse(old);throw Error('本地保存失败，未采用草案，请先导出记录。')}
+ renderSession();notify('已带入本次约定，原任务和实测保留。请与 Lemon 一起确认范围与责任。');
+}
+window.LemonTaskPlanner=Object.freeze({snapshot:planningSnapshot,stageForm:stagePlanningForm,edit:editPlanningCandidate,adopt:adoptPlanningProposal,
+ removeCandidate(id){const s=session();s.candidates=(s.candidates||[]).filter(t=>t.id!==id);persist()},
+ lastProposal:()=>session().lastProposal||null});
+
 catalogue();fillTemplate('math-xueba');renderSession();navigation();
 })();
