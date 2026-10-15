@@ -16,6 +16,8 @@ const TEMPLATES=[
  {id:'en-copy',name:'英文抄写',unit:'词',quantity:50,scope:'已理解的50–80个英文单词，按英文词数计，不套中文500字。',quality:'大小写、词间距、拼写和标点基本正确。',group:'已懂英文短段抄写',refs:[{from:50,to:80,min:10,max:15}],refText:'50–80词 · 10–15分钟'},
  {id:'en-vocab',name:'英语词汇复习',unit:'词',quantity:8,scope:'已学8–10词：认读、遮挡提取、少量拼写或运用；新词学习另估。',quality:'不只看着读，遮住后尝试提取或使用。',group:'已学词认读·提取·使用',refs:[{from:8,to:10,min:8,max:12}],refText:'8–10词 · 8–12分钟'},
  {id:'xdf-reader',name:'小书童训练',unit:'份',quantity:1,scope:'先看当天材料、录音长度、跟读遍数与提交要求，不固定拍成8分钟。',quality:'按本次具体听读、回答或提交要求完成。',group:'小书童·需写明任务包',refs:[],refText:'按实际任务包估时'},
+ {id:'zh-unit-review',name:'语文单元复习',unit:'次',quantity:1,scope:'成人确认已经学完的一个语文单元；分段提取、运用和自查，不代替学校必做任务。',quality:'积累能独立提取；阅读能回原文找依据；完成一个表达练习；说出一处待复查内容。',group:'语文单元复习·具体单元',refs:[],refText:'整次试行35分钟；非年龄常模'},
+ {id:'math-unit-review',name:'数学单元复习',unit:'次',quantity:1,scope:'成人确认已经学完的一个数学单元；关系、典型方法、变式与讲解，非整卷重复刷题。',quality:'能解释一个核心方法；独立尝试典型题与小变式；能指出卡点或检查方式。',group:'数学单元复习·具体单元',refs:[],refText:'整次试行29分钟；非年龄常模'},
  {id:'custom',name:'其他实际任务',unit:'份',quantity:1,scope:'先写明范围、熟悉度与质量，建立这类任务的实测，不凭名称编一个标准。',quality:'明确本次完成范围与可检查的结果。',group:'待写明同类任务组',refs:[],refText:'待具体材料与实测'}
 ];
 const FIXED=[
@@ -157,7 +159,24 @@ function adoptPlanningProposal(proposal,signature){
  if(!persist()){db.drafts[date]=JSON.parse(old);throw Error('本地保存失败，未采用草案，请先导出记录。')}
  renderSession();notify('已带入本次约定，原任务和实测保留。请与 Lemon 一起确认范围与责任。');
 }
-window.LemonTaskPlanner=Object.freeze({snapshot:planningSnapshot,stageForm:stagePlanningForm,edit:editPlanningCandidate,adopt:adoptPlanningProposal,
+// Stage a voluntary unit review, never infer curriculum completion or create measurements.
+function stageUnitReview(subject,unitName){
+ const cfg={chinese:{template:'zh-unit-review',name:'语文',minutes:35},math:{template:'math-unit-review',name:'数学',minutes:29}}[subject];
+ const unit=text(unitName).trim();
+ if(!cfg||!unit||unit.length>60)return {ok:false,message:'请填入已学完的具体单元（最多60字）。'};
+ const id='unit-review:'+date+':'+subject+':'+unit,s=session();
+ if(s.tasks.some(t=>planningKey(t)===id))return {ok:false,message:'本次约定已包含这个单元复习，无需重复加入。'};
+ if((s.candidates||[]).some(t=>t.id===id))return {ok:false,message:'该单元已在候选中，可直接生成草案或调整范围。'};
+ const tpl=template(cfg.template),c={id,template:cfg.template,name:cfg.name+' · '+unit+' · 单元复习',
+  unit:'次',quantity:1,familiarity:'familiar',qualityRule:tpl.quality,group:cfg.name+'单元复习·'+unit,
+  necessity:'optional',deadline:'',timeOverride:cfg.minutes,teachingOverride:0,splittable:false,link:null};
+ if(!Array.isArray(s.candidates))s.candidates=[];
+ s.candidates.push(c);
+ if(!persist()){s.candidates=s.candidates.filter(t=>t.id!==id);return {ok:false,message:'浏览器未能保存候选，请手动录入。'};}
+ notify('单元复习已加入候选。'+cfg.minutes+'分钟为试用预算，请核对当天任务与余量。');
+ return {ok:true,message:'已加入候选。请审查生成的本次草案。'};
+}
+window.LemonTaskPlanner=Object.freeze({stageUnitReview,snapshot:planningSnapshot,stageForm:stagePlanningForm,edit:editPlanningCandidate,adopt:adoptPlanningProposal,
  removeCandidate(id){const s=session();s.candidates=(s.candidates||[]).filter(t=>t.id!==id);persist()},
  lastProposal:()=>session().lastProposal||null});
 

@@ -1,0 +1,14 @@
+.unit-review-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:15px}
+.unit-review-card{border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.unit-review-card header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+.unit-review-card header strong{white-space:nowrap;font-size:17px;color:var(--accent)}
+.unit-review-progress{background:var(--soft);padding:9px 11px;border-radius:7px;font-size:12px;margin:12px 0}
+.unit-review-card ol{list-style:none;margin:0;padding:0}
+.unit-review-card li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.unit-review-card li small{display:block;color:var(--muted);font-size:12px}
+.unit-review-card li em{white-space:nowrap;font-style:normal;color:var(--accent)}
+.unit-review-entry{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.unit-review-entry label{font-size:13px;font-weight:700}
+.unit-review-entry button{align-self:flex-start}
+@media(max-width:760px){.unit-review-grid{grid-template-columns:1fr}}
+@media print{.unit-review-entry{display:none}}

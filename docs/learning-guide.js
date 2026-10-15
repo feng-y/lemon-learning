@@ -178,11 +178,14 @@ function renderProgressForm(){
   form.appendChild(block);
  }
 }
+function announceProgress(){
+ window.dispatchEvent(new CustomEvent('lemon:progresschange',{detail:{subjects:JSON.parse(JSON.stringify(state))}}));
+}
 function handleFieldChange(event){
  const e=event.target,key=e.dataset.subject,field=e.dataset.field;
  if(!state[key])state[key]={current:"",next:"",status:"unknown"};
  state[key][field]=e.value;
- persistLocal();renderToday();renderWeek();
+ persistLocal();renderToday();renderWeek();announceProgress();
  if(key==="math"&&(field==="current"||field==="next"))renderProgressForm();
  showStatus("学习进度已保存在本浏览器。可以点击“复制进度摘要”发给我，更新网站的教材进度源。");
 }
@@ -211,7 +214,7 @@ function exportProgress(){
 function syncFromRepo(){
  state=JSON.parse(JSON.stringify(baseline.subjects||fallback.subjects));
  try{localStorage.removeItem(STORAGE)}catch(e){}
- renderProgressForm();renderToday();renderWeek();showStatus("已恢复为仓库进度（本地未同步草稿已清除）");
+ renderProgressForm();renderToday();renderWeek();announceProgress();showStatus("已恢复为仓库进度（本地未同步草稿已清除）");
 }
 function reconcile(source){
  baseline=source&&source.subjects?source:fallback;
@@ -221,6 +224,7 @@ function reconcile(source){
  renderProgressForm();renderToday();renderWeek();
  loaded=true;
  $("guideOrigin").textContent=baseline===fallback?"暂未读取到仓库进度，可先录入并复制同步":"仓库进度更新："+(baseline.updatedAt||"未标注");
+ announceProgress();
 }
 function init(){
  $("guideCopyProgress").addEventListener("click",exportProgress);
@@ -237,5 +241,6 @@ function init(){
   showStatus("教材进度文件暂不可用，已显示通用方法；稍后可刷新重试。");
  });
 }
+window.LemonLearningProgress=Object.freeze({snapshot:()=>JSON.parse(JSON.stringify(state))});
 init();
 })();
