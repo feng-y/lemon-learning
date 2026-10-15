@@ -17,8 +17,18 @@
     $('adoptedGaps').innerHTML=last?.unresolved?.length?'<details><summary>上次草案仍需另排／核对的部分</summary>'+last.unresolved.map(t=>`<p>${esc(t.name)}：${esc(t.reason)}</p>`).join('')+'</details>':'';
   }
   function list(title,items,editable=false){return !items.length?'':`<details class="gp-detail" ${title.includes('待确认')?'open':''}><summary>${title}（${items.length}）</summary>`+items.map(t=>`<div class="gp-gap"><div><b>${esc(t.name)}</b><p>${esc(t.reason)}</p></div>${editable?`<button type="button" class="btn small secondary" data-edit="${esc(t.id)}">补充／调整</button>`:''}</div>`).join('')+'</details>'}
+  function renderStart(){
+    const panel=$('startRitualTask'),budget=$('startRitualBudget');
+    if(!panel||!budget)return;
+    const s=snapshot().session||{},first=(s.tasks||[])[0],overhead=Math.max(0,Number(s.overhead)||0),intro=Math.min(5,Math.floor(overhead/3));
+    panel.textContent=first?
+      '本次第一项：'+first.name+' · '+first.quantity+first.unit+' · 约定'+first.planned+'分钟。完成标准：'+first.qualityRule+'。请由 Lemon 说出真正的第一步，不让成人替他决定。':
+      '本次尚未约定任务。请先核对实际作业并确认本次安排；不要根据课表自动加任务。';
+    budget.textContent=intro===5?'原有开始前确认环节已预留5分钟，包含在本次休息与收尾预算内。':
+      '当前预算中开始前仅分配'+intro+'分钟；按现有时间简化准备，不要为了凑足5分钟追加学习时间。';
+  }
   function render(){
-    candidates();
+    renderStart();candidates();
     if(!draft){$('generatedPlan').innerHTML=message?`<p class="notice" role="status">${esc(message)}</p>`:'';return}
     const b=stats(),stale=!fresh();
     const rows=draft.selected.map((t,i)=>`<article class="gp-task"><div class="gp-task-head"><label class="check"><input type="checkbox" data-use="${i}" ${t.use===false?'':'checked'}><b>${esc(t.name)} · ${t.quantity}${esc(t.unit)}</b></label><button type="button" class="btn small secondary" data-edit="${esc(t.sourceId)}">调整范围</button></div><p class="note">选入理由：${esc(t.reason)}</p><div class="grid"><div class="field"><label for="gp-time-${i}">建议任务用时（分钟）</label><input id="gp-time-${i}" type="number" data-time="${i}" min="1" max="180" step="1" value="${t.planned}"></div><div class="field"><label for="gp-teach-${i}">另留教学（分钟）</label><input id="gp-teach-${i}" type="number" data-teach="${i}" min="0" max="120" step="1" value="${t.teaching}"></div></div><p class="gp-basis"><strong>${({history:'依据：同量实测',reference:'依据：首次试用参考',adult:'依据：成人预算'})[t.basis.kind]}</strong> · ${esc(t.basis.text)}</p>${t.basis.samples?.length?`<p class="quiet">实测来源：${t.basis.samples.map(h=>esc(h.date)+' / '+h.minutes+'分').join('，')}</p>`:''}<p class="quiet">教学依据：${esc(t.teachingBasis)}</p><p class="note"><b>成人怎么帮：</b>${esc(t.support)}</p><p class="note"><b>结束条件：</b>完成${t.quantity}${esc(t.unit)}；${esc(t.qualityRule)}${t.remainder?'。剩余'+t.remainder+esc(t.unit)+'仍需另排':''}</p>${t.caution?`<p class="quiet">${esc(t.caution)}</p>`:''}</article>`).join('');
@@ -56,7 +66,7 @@
     }
     render();
   });
-  window.addEventListener('lemon:taskschange',()=>{if(draft)render();else candidates()});
+  window.addEventListener('lemon:taskschange',()=>{if(draft)render();else {candidates();renderStart()}});
   window.addEventListener('lemon:datechange',()=>{draft=null;message='';render()});
   render();
 })();

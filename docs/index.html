@@ -58,6 +58,20 @@
 <label class="check"><input type="checkbox" id="plannerSplit"><span>必要时允许先做小段（剩余任务另排，不算全部完成）</span></label>
 </form>
 <div id="planList" style="margin-top:15px"></div>
+<section class="planner-box" id="startRitual" aria-labelledby="startRitualHeading">
+<div class="planner-head"><div><h3 id="startRitualHeading">开工前 5 分钟 · Lemon 自己做决定</h3><p class="note">使用现有“计划、休息与收尾”预算，不再加一份训练；成人只在必要时提醒，最后让 Lemon 自己开始。</p></div></div>
+<ol style="padding-left:22px;margin:10px 0;font-size:13px">
+<li><b>看清（1分钟）</b>：今天有哪些已确认的任务？</li>
+<li><b>排序（1分钟）</b>：我决定先做哪项，为什么？</li>
+<li><b>估量（1分钟）</b>：这项约定多少分钟，做到什么算完成？</li>
+<li><b>拆步（1分钟）</b>：我现在能独立做的第一小步是什么？</li>
+<li><b>启动（1分钟）</b>：准备材料，先独立尝试，遇到卡点再求助。</li>
+</ol>
+<p id="startRitualTask" class="notice" aria-live="polite">尚未确认本次任务；先在上方生成并采用约定。</p>
+<p id="startRitualBudget" class="note"></p>
+<p class="note">结束后继续使用现有“实测与反馈”记录质量、提醒次数和帮助程度，不新增打卡或“前额叶评分”。</p>
+</section>
+
 <details id="legacyPool"><summary>带入已有任务池、每日练习与课程作业</summary><p>旧任务的“预计分钟”只作旧预算，不冒充实测，也不自动认定已完成。填入本次范围、教学和完成标准后才加入约定。</p><div id="poolCandidates"></div></details>
 <details><summary>与 Lemon 约定责任和真实奖励</summary><div class="grid"><div class="field"><label for="commitment">Lemon 这次自己负责</label><input id="commitment" maxlength="180" placeholder="例如：先自己做完三题，不逐题找成人判对错"></div><div class="field"><label for="reward">达成后兑现的奖励</label><select id="reward"><option>听故事20分钟</option><option>玩游戏15分钟</option><option>看游戏视频10分钟</option><option>亲子游戏20分钟</option><option>按已有家庭约定</option></select></div></div><label class="check"><input id="confirmed" type="checkbox"><span>已一起确认任务量、时间、质量与责任；完成后不临时加码。</span></label><p>奖励看本次合理约定是否兑现，不与其他孩子比，也不以安静坐满、全对或达到参考速度为条件。</p></details>
 <div class="actions"><a class="btn secondary" href="#stage-execute">按这份约定记录结果 ↓</a></div>
@@ -78,4 +92,4 @@
 <details><summary>记录备份与跨设备交接</summary><p>页面没有云端数据库。记录只在当前设备、浏览器和域名；家教与家长通过复制记录交接，换域名前先导出。旧任务池和教材草稿仍保留，不会自动变成实测。</p><div class="actions"><button type="button" class="btn secondary" id="exportData">导出本地备份</button><label class="btn secondary" for="importData">导入备份</label><input id="importData" class="no-print" type="file" accept=".json,application/json" hidden></div></details>
 </section>
 </main><footer class="footer">Lemon · 本轮任务标尺 v0.1 / 2026-10-14。参考是暂定预算，实测才是个体证据。不生成“自觉性总分”。</footer></div><div id="status" class="toast" role="status" aria-live="polite" hidden></div>
-<script src="./plan-engine.js?v=20261014-1"></script><script src="./task-ruler.js?v=20261015-1"></script><script src="./plan-generator.js?v=20261014-1"></script><script src="./learning-background.js?v=20261014-1"></script><script src="./learning-guide.js?v=20261015-1" defer></script><script src="./unit-review.js?v=20261015-1" defer></script></body></html>
+<script src="./plan-engine.js?v=20261014-1"></script><script src="./task-ruler.js?v=20261015-1"></script><script src="./plan-generator.js?v=20261015-2"></script><script src="./learning-background.js?v=20261014-1"></script><script src="./learning-guide.js?v=20261015-1" defer></script><script src="./unit-review.js?v=20261015-1" defer></script></body></html>
